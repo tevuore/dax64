@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:c64/models/employee.dart';
+import 'package:c64/models/index.dart';
 import 'package:c64/utils/color_text.dart';
 import 'package:c64/utils/colors.dart';
 import 'package:console/console.dart';
@@ -46,6 +47,24 @@ class CommitCommand extends Command {
 
     final e = await readJsonFile(argResults!['file']);
     colorText.blue(e.id).print();
+
+    final op = await readOpcodeJsonFile('./opcodes_output.json');
+
+
+    op.instructions.forEach((instruction) {
+      var colorText = ColorText();
+      //colorText.setBackgroundColor(7);
+      colorText
+          .gold('\n${instruction.instruction} ');
+
+      final opcodes = instruction.opcodes;
+
+      instruction.opcodes.forEach((opcode) {
+        colorText.green('${opcode.opcode} ');
+      });
+      colorText.print();
+    });
+
   }
 
   Future<Employee> readJsonFile(String filePath) async {
@@ -54,4 +73,9 @@ class CommitCommand extends Command {
     return Employee.fromJson(map);
   }
 
+  Future<Opcodes> readOpcodeJsonFile(String filePath) async {
+    var input = await File(filePath).readAsString();
+    var map = jsonDecode(input);
+    return Opcodes.fromJson(map);
+  }
 }

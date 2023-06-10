@@ -1,6 +1,4 @@
-import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
-import 'package:c64/c64.dart' as c64;
 import 'package:c64/commit_command.dart';
 
 void main(List<String> args) {

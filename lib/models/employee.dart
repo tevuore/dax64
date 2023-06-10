@@ -1,8 +1,9 @@
-
+import 'package:meta/meta.dart';
 import 'package:quiver/core.dart';
 
 import 'index.dart';
 
+@immutable
 class Employee {
 
   const Employee({
