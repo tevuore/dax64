@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:args/command_runner.dart';
+import 'package:c64/models/employee.dart';
 import 'package:c64/utils/color_text.dart';
 import 'package:c64/utils/colors.dart';
 import 'package:console/console.dart';
@@ -14,15 +18,16 @@ class CommitCommand extends Command {
   CommitCommand() {
     // we can add command specific arguments here.
     // [argParser] is automatically created by the parent class.
+    argParser.addOption('file');
     argParser.addFlag('all', abbr: 'a', help: "This is help text of 'all'");
   }
 
   // [run] may also return a Future.
   @override
-  void run() {
+  void run() async {
     // [argResults] is set before [run()] is called and contains the flags/options
     // passed to this command.
-    print(argResults!['all']);
+    print(argResults!['file']);
 
     Colors.init();
     var colorText = ColorText();
@@ -38,7 +43,15 @@ class CommitCommand extends Command {
       pen.text('${c.key}\n');
     }
     pen.print();
+
+    final e = await readJsonFile(argResults!['file']);
+    colorText.blue(e.id).print();
   }
 
+  Future<Employee> readJsonFile(String filePath) async {
+    var input = await File(filePath).readAsString();
+    var map = jsonDecode(input);
+    return Employee.fromJson(map);
+  }
 
 }
