@@ -1,0 +1,7 @@
+10 INPUT"ALKUOSOITE:";S:S1=S		; REM esimerkiksi 6000
+20 DATA169,65,24,105,2,32,210,256,96,E 	; REM datat desimaaleina
+30 READA$:IFA$="E"THEN50
+40 A=VAL=(A$):POKES1,A:S1=S1+1:GOTO30	; REM datojen asetus
+50 SYS SYS
+60 END
+

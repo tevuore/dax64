@@ -1,22 +1,15 @@
 import 'package:args/command_runner.dart';
 import 'package:c64/commit_command.dart';
+import 'package:c64/parse_basic_data_command.dart';
 
-void main(List<String> args) {
-  // print('Hello world: ${c64.calculate()}!');
-  //
-  // var parser = ArgParser();
-  // // TODO how to provide help
-  // parser.addOption('mode');
-  // parser.addFlag('verbose', defaultsTo: false);
-  //
-  // var results = parser.parse(args);
-  //
-  // print(results['mode']); // debug
-  // print(results['verbose']); // true
-
-  var runner = CommandRunner("dgit", "A dart implementation of distributed version control.")
+Future<int> main(List<String> args) async {
+  final runner = CommandRunner("c64", "Commodore 64 machine code utilities")
     ..addCommand(CommitCommand())
-    ..argParser.addFlag('verbose', abbr: 'v', help: 'increase logging')
-    ..run(args);
+    ..addCommand(ParseBasicDataCommand())
+    ..argParser.addFlag('verbose', abbr: 'v', help: 'increase logging');
 
+  final result = await runner.run(args);
+
+  if (result is int) return result;
+  return 0;
 }
