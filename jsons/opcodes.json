@@ -1,0 +1,24 @@
+{
+  "instructions": [
+    {
+      "instruction": "ADC",
+      "description": "Add to Accumulator with Carry",
+      "flags": {
+        "Negative": "From result",
+        "Zero": "From result",
+        "Carry": "From result",
+        "Interrupt": "--",
+        "Decimal": "--",
+        "Overflow": "From result"
+      },
+      "opcodes": [
+        {
+          "opcode": "0x69",
+          "address_mode": "Immediate",
+          "bytes": "2",
+          "cycles": "2"
+        }
+      ]
+    }
+  ]
+}
