@@ -61,14 +61,14 @@ class ColorText {
   void sgr(int id, [List<int>? params]) {
     String stuff;
     if (params != null) {
-      stuff = "${id};${params.join(";")}";
+      stuff = "$id;${params.join(";")}";
     } else {
       stuff = id.toString();
     }
     ansi('${stuff}m');
   }
 
-  void ansi(String after) => _buffer.write('${Console.ANSI_ESCAPE}${after}');
+  void ansi(String after) => _buffer.write('${Console.ANSI_ESCAPE}$after');
 
   ColorText reset() {
     sgr(0);

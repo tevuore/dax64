@@ -1,6 +1,4 @@
 export 'opcodes.dart';
-export 'employee.dart';
-export 'product.dart';
 import 'package:quiver/core.dart';
 
 T? checkOptional<T>(Optional<T?>? optional, T? Function()? def) {

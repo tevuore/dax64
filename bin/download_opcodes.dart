@@ -31,7 +31,7 @@ void main(List<String> args) async {
   }
 
   String dir = '.';
-  String filename = 'opcodes_output.json';
+  String filename = 'opcodes.json';
   File file = File('$dir/$filename');
   const JsonEncoder encoder = JsonEncoder.withIndent('  ');
   await file.writeAsString(encoder.convert(finalJson));

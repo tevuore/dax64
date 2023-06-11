@@ -3,7 +3,7 @@
 
 import 'dart:typed_data';
 
-import 'package:c64/models/index.dart';
+import 'package:c64/models/generated/index.dart';
 import 'package:meta/meta.dart';
 
 @immutable
