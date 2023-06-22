@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:c64/basic_parser.dart' as basic_parser;
 import 'package:args/command_runner.dart';
 
@@ -20,14 +21,15 @@ class ParseBasicDataCommand extends Command {
       print("ERROR: Option 'input-file' is mandatory");
       return 1;
     }
-    
-    final numbers = basic_parser.parse(await readInputFile());
 
-    List<String> hexCodes = numbers.map((number) => uint8ToHex(number)).toList();
+    final bytes = basic_parser.parse(await readInputFile());
 
     if (isOutputFileDefined()) {
-      await writeHexCodesToOutputFile(hexCodes);
+      await writeHexCodesToOutputFile(bytes);
     } else {
+      List<String> hexCodes =
+        bytes.map((number) => uint8ToHex(number)).toList();
+
       print(hexCodes.join(' '));
     }
 
@@ -42,9 +44,9 @@ class ParseBasicDataCommand extends Command {
     return argResults!.wasParsed('output-file');
   }
 
-  Future writeHexCodesToOutputFile(List<String> hexCodes) async {
+  Future writeHexCodesToOutputFile(Uint8List bytes) async {
     final outputFile = argResults!['output-file'];
-    File(outputFile).writeAsString(hexCodes.join(' '));
+    File(outputFile).writeAsBytes(bytes);
   }
 
   Future<String> readInputFile() async {
