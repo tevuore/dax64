@@ -10,24 +10,49 @@ class ParseBasicDataCommand extends Command {
 
   ParseBasicDataCommand() {
     argParser.addOption('input-file');
+    argParser.addOption('output-file');
   }
 
   @override
   Future<int> run() async {
     // TODO generic checked
-    if (!argResults!.wasParsed('input-file')) {
+    if (!isInputFileDefined()) {
       print("ERROR: Option 'input-file' is mandatory");
       return 1;
     }
-
-    final path = argResults!['input-file'];
-    final data = await File(path).readAsString();
-    final numbers = basic_parser.parse(data);
+    
+    final numbers = basic_parser.parse(await readInputFile());
 
     List<String> hexCodes = numbers.map((number) => uint8ToHex(number)).toList();
-    print(hexCodes);
+
+    if (isOutputFileDefined()) {
+      await writeHexCodesToOutputFile(hexCodes);
+    } else {
+      print(hexCodes.join(' '));
+    }
 
     return 0;
+  }
+
+  bool isInputFileDefined() {
+    return argResults!.wasParsed('input-file');
+  }
+
+  bool isOutputFileDefined() {
+    return argResults!.wasParsed('output-file');
+  }
+
+  Future writeHexCodesToOutputFile(List<String> hexCodes) async {
+    final outputFile = argResults!['output-file'];
+    File(outputFile).writeAsString(hexCodes.join(' '));
+  }
+
+  Future<String> readInputFile() async {
+    final path = argResults!['input-file'];
+    return await File(path).readAsString();
+  }
+  void printHexCodes(List<String> hexCodes) {
+    print(hexCodes.join(' '));
   }
 
 }
