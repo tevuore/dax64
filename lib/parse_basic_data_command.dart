@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:c64/basic_parser.dart' as basic_parser;
+
 import 'package:args/command_runner.dart';
+import 'package:c64/basic_parser.dart' as basic_parser;
+import 'package:c64/hex_formatter.dart';
 
 class ParseBasicDataCommand extends Command {
   @override
@@ -27,10 +29,7 @@ class ParseBasicDataCommand extends Command {
     if (isOutputFileDefined()) {
       await writeHexCodesToOutputFile(bytes);
     } else {
-      List<String> hexCodes =
-        bytes.map((number) => uint8ToHex(number)).toList();
-
-      print(hexCodes.join(' '));
+      print(HexFormatter.format(bytes));
     }
 
     return 0;
@@ -53,11 +52,6 @@ class ParseBasicDataCommand extends Command {
     final path = argResults!['input-file'];
     return await File(path).readAsString();
   }
-
-  void printHexCodes(List<String> hexCodes) {
-    print(hexCodes.join(' '));
-  }
-
 }
 
 // TODO move to utils package
