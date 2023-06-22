@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:c64/basic_parser.dart' as basic_parser;
+
 import 'package:args/command_runner.dart';
 import 'package:c64/disassembler.dart';
 import 'package:c64/program_formatter.dart';
@@ -14,6 +14,8 @@ class DisassembleCommand extends Command {
   DisassembleCommand() {
     argParser.addOption('input-file');
     argParser.addOption('output-file');
+    argParser.addFlag('add-instruction-description',
+        abbr: 'i', negatable: false);
   }
 
   @override
@@ -30,7 +32,8 @@ class DisassembleCommand extends Command {
     await disassembler.initialize();
 
     final program = disassembler.disassemble(bytes);
-    final output = ProgramFormatter.format(program);
+    final output = ProgramFormatter.format(
+        program, argResults!['add-instruction-description']);
 
     if (isOutputFileDefined()) {
       await writeToOutputFile(output);
@@ -58,5 +61,4 @@ class DisassembleCommand extends Command {
     final path = argResults!['input-file'];
     return await File(path).readAsBytes();
   }
-
 }

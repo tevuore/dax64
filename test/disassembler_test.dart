@@ -32,7 +32,7 @@ void main() {
 
     final program = disassembler.disassemble(bytes);
 
-    final output = ProgramFormatter.format(program);
+    final output = ProgramFormatter.format(program, true);
     print(output);
   });
 }

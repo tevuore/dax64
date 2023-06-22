@@ -3,18 +3,27 @@ import 'dart:typed_data';
 import 'package:c64/models/generated/opcodes.dart';
 import 'package:c64/models/instruction.dart';
 
+const commentStartingColumn = 15;
+
 class ProgramFormatter {
-  static String format(Program program) {
+  static String format(Program program, bool addInstructionDescription) {
     final buffer = StringBuffer();
     for (var instruction in program.instructions) {
-      buffer.write(instruction.instruction.instruction);
+      final lineBuff = StringBuffer();
+      lineBuff.write(instruction.instruction.instruction);
 
       final String addressMode =
           outputWithAddressMode(instruction.opcode, instruction.paramBytes);
       if (addressMode.isNotEmpty) {
-        buffer.write(' $addressMode');
+        lineBuff.write(' $addressMode');
       }
 
+      if (addInstructionDescription) {
+        lineBuff.write(
+            '${''.padLeft(commentStartingColumn - lineBuff.length, ' ')}; ${instruction.instruction.description}');
+      }
+
+      buffer.write(lineBuff.toString());
       buffer.write('\n');
     }
     return buffer.toString();
