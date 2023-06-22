@@ -1,11 +1,8 @@
-
-
-import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:c64/models/generated/opcodes.dart';
 import 'package:c64/models/instruction.dart';
+import 'package:c64/opcodes_store.dart';
 
 class Disassembler {
   late Opcodes opcodes;
@@ -19,7 +16,8 @@ class Disassembler {
     for (var instruction in opcodes.instructions) {
       for (var opcode in instruction.opcodes) {
         // one instruction can have multiple opcodes
-        opcodeMap[int.parse(opcode.opcode.replaceFirst('0x', ''), radix: 16)] = instruction;
+        opcodeMap[int.parse(opcode.opcode.replaceFirst('0x', ''), radix: 16)] =
+            instruction;
       }
     }
   }
@@ -35,7 +33,7 @@ class Disassembler {
       }
       var instruction = opcodeMap[opcode];
       var opcodeObj = instruction!.opcodes.firstWhere(
-              (element) => element.opcode == '0x${opcode.toRadixString(16)}');
+          (element) => element.opcode == '0x${opcode.toRadixString(16)}');
 
       final numberOfParamBytes = (int.parse(opcodeObj.bytes)) - 1;
 
@@ -52,11 +50,5 @@ class Disassembler {
     }
 
     return program;
-  }
-
-  Future<Opcodes> readOpcodeJsonFile(String filePath) async {
-    var input = await File(filePath).readAsString();
-    var map = jsonDecode(input);
-    return Opcodes.fromJson(map);
   }
 }
