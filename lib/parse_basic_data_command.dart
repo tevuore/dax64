@@ -53,12 +53,14 @@ class ParseBasicDataCommand extends Command {
     final path = argResults!['input-file'];
     return await File(path).readAsString();
   }
+
   void printHexCodes(List<String> hexCodes) {
     print(hexCodes.join(' '));
   }
 
 }
 
+// TODO move to utils package
 String uint8ToHex(int uint8) {
   return uint8.toRadixString(16).padLeft(2, '0').toUpperCase();
 }
