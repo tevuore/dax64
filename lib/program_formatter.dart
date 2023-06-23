@@ -45,7 +45,13 @@ String outputWithAddressMode(Opcode opcode, Uint8List paramBytes) {
       return '#${byteToString(paramBytes[0])}';
     case 'Implied':
       throw Exception('Implied address mode should not be formatted');
-    case 'Relative':
+    case '"Bit 0 - Zero Page, Relative':
+    case '"Bit 1 - Zero Page, Relative':
+    case '"Bit 2 - Zero Page, Relative':
+    case '"Bit 3 - Zero Page, Relative':
+    case '"Bit 4 - Zero Page, Relative':
+    case '"Bit 5 - Zero Page, Relative':
+    case '"Bit 6 - Zero Page, Relative':
       if (paramBytes.length != 1) {
         throw Exception('Relative address mode should have 1 bytes');
       }
@@ -60,7 +66,7 @@ String outputWithAddressMode(Opcode opcode, Uint8List paramBytes) {
       return '(${bytesToAddress(paramBytes)})';
     case '(Indirect, X)':
       return '(${bytesToAddress(paramBytes)}),x';
-    case '(Indirect, Y)':
+    case '(Indirect), Y':
       return '(${bytesToAddress(paramBytes)}),y';
     case 'Zero Page':
       return byteToString(paramBytes[0]);
