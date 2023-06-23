@@ -30,8 +30,7 @@ class AssembleCommand extends Command {
     await disassembler.initialize();
 
     final program = disassembler.disassemble(bytes);
-    final output = ProgramFormatter.format(
-        program, argResults!['add-instruction-description']);
+    final output = ProgramFormatter.format(program);
 
     if (isOutputFileDefined()) {
       await writeToOutputFile(output);

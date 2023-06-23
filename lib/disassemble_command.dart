@@ -16,6 +16,7 @@ class DisassembleCommand extends Command {
     argParser.addOption('output-file');
     argParser.addFlag('add-instruction-description',
         abbr: 'i', negatable: false);
+    argParser.addFlag('add-bytes', abbr: 'b', negatable: false);
   }
 
   @override
@@ -32,8 +33,9 @@ class DisassembleCommand extends Command {
     await disassembler.initialize();
 
     final program = disassembler.disassemble(bytes);
-    final output = ProgramFormatter.format(
-        program, argResults!['add-instruction-description']);
+    final output = ProgramFormatter.format(program,
+        addInstructionDescription: argResults!['add-instruction-description'],
+        addBytes: argResults!['add-bytes']);
 
     if (isOutputFileDefined()) {
       await writeToOutputFile(output);

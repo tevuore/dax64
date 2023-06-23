@@ -1,15 +1,28 @@
 import 'dart:typed_data';
 
+import 'package:c64/hex_formatter.dart';
 import 'package:c64/models/generated/opcodes.dart';
 import 'package:c64/models/instruction.dart';
+import 'package:c64/utils/hex8bit.dart';
 
 const commentStartingColumn = 15;
 
 class ProgramFormatter {
-  static String format(Program program, bool addInstructionDescription) {
+  static String format(Program program,
+      {bool addInstructionDescription = false, bool addBytes = false}) {
     final buffer = StringBuffer();
     for (var instruction in program.instructions) {
       final lineBuff = StringBuffer();
+
+      if (addBytes) {
+        final allBytes = <int>[];
+        allBytes.add(parse8BitHex(instruction.opcode.opcode));
+        allBytes.addAll(instruction.paramBytes);
+
+        String hex = HexFormatter.format(Uint8List.fromList(allBytes));
+        lineBuff.write(hex.padRight(9, ' '));
+      }
+
       lineBuff.write(instruction.instruction.instruction);
 
       final String addressMode =
