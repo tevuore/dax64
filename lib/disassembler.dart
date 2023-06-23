@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:c64/models/generated/opcodes.dart';
 import 'package:c64/models/instruction.dart';
 import 'package:c64/opcodes_store.dart';
+import 'package:c64/utils/hex8bit.dart';
 
 class Disassembler {
   late Opcodes opcodes;
@@ -16,8 +17,7 @@ class Disassembler {
     for (var instruction in opcodes.instructions) {
       for (var opcode in instruction.opcodes) {
         // one instruction can have multiple opcodes
-        opcodeMap[int.parse(opcode.opcode.replaceFirst('0x', ''), radix: 16)] =
-            instruction;
+        opcodeMap[parse8BitHex(opcode.opcode)] = instruction;
       }
     }
   }
