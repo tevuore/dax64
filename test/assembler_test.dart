@@ -1,9 +1,9 @@
 import 'package:c64/assembler.dart';
-import 'package:c64/program_formatter.dart';
+import 'package:c64/hex_formatter.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('should disassemble input', () async {
+  test('should assemble input to bytes', () async {
     // TODO can I have async setup?
     final assembler = Assembler();
     await assembler.initialize();
@@ -19,10 +19,23 @@ void main() {
     RTS            ; Return from Subroutine
     ''';
 
-    final program = assembler.assemble(input);
+    final bytes = assembler.assemble(input);
 
-    // TODO hex formatter
-    final output = ProgramFormatter.format(program, true);
+    final output = HexFormatter.format(bytes);
     print(output);
+    expect(output, equals('A0 00 98 99 00 04 A9 03 99 00 D8 C8 D0 F4 60'));
+  });
+
+  test('should assemble immediate address mode', () async {
+    // TODO can I have async setup?
+    final assembler = Assembler();
+    await assembler.initialize();
+
+    final input = r'LDA #$05';
+    final bytes = assembler.assemble(input);
+
+    final output = HexFormatter.format(bytes);
+    print(output);
+    expect(output, equals('A9 05'));
   });
 }
