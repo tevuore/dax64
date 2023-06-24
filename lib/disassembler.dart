@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:c64/errors.dart';
 import 'package:c64/models/generated/opcodes.dart';
 import 'package:c64/models/instruction.dart';
 import 'package:c64/opcodes_store.dart';
@@ -28,12 +29,20 @@ class Disassembler {
     while (i < bytes.length) {
       var opcode = bytes[i];
       if (!opcodeMap.containsKey(opcode)) {
-        print('Unknown opcode: ${opcode.toRadixString(16)}');
-        break;
+        throw AssemblerError('Unknown opcode: ${opcode.toRadixString(16)}');
       }
       var instruction = opcodeMap[opcode];
-      var opcodeObj = instruction!.opcodes.firstWhere(
-          (element) => element.opcode == '0x${opcode.toRadixString(16)}');
+      final opcodeToLookFor = '0x${opcode.toRadixString(16)}';
+      Opcode opcodeObj;
+
+      // TODO smarter data structure / find
+      try {
+        opcodeObj = instruction!.opcodes
+            .firstWhere((element) => element.opcode == opcodeToLookFor);
+      } catch (e) {
+        throw AssemblerError(
+            'Unknown opcode when looking from catalog: $opcodeToLookFor');
+      }
 
       final numberOfParamBytes = (int.parse(opcodeObj.bytes)) - 1;
 

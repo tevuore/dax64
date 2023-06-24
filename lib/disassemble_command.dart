@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:args/command_runner.dart';
 import 'package:c64/disassembler.dart';
+import 'package:c64/errors.dart';
 import 'package:c64/program_formatter.dart';
 
 class DisassembleCommand extends Command {
@@ -21,29 +22,33 @@ class DisassembleCommand extends Command {
 
   @override
   Future<int> run() async {
-    // TODO generic checked
-    if (!isInputFileDefined()) {
-      print("ERROR: Option 'input-file' is mandatory");
+    try {
+      // TODO generic checked
+      if (!isInputFileDefined()) {
+        throw InvalidInputError("Option 'input-file' is mandatory");
+      }
+
+      final bytes = await readBytes();
+
+      final disassembler = Disassembler();
+      await disassembler.initialize();
+
+      final program = disassembler.disassemble(bytes);
+      final output = ProgramFormatter.format(program,
+          addInstructionDescription: argResults!['add-instruction-description'],
+          addBytes: argResults!['add-bytes']);
+
+      if (isOutputFileDefined()) {
+        await writeToOutputFile(output);
+      } else {
+        print(output);
+      }
+
+      return 0;
+    } catch (e) {
+      print(e);
       return 1;
     }
-
-    final bytes = await readBytes();
-
-    final disassembler = Disassembler();
-    await disassembler.initialize();
-
-    final program = disassembler.disassemble(bytes);
-    final output = ProgramFormatter.format(program,
-        addInstructionDescription: argResults!['add-instruction-description'],
-        addBytes: argResults!['add-bytes']);
-
-    if (isOutputFileDefined()) {
-      await writeToOutputFile(output);
-    } else {
-      print(output);
-    }
-
-    return 0;
   }
 
   bool isInputFileDefined() {
