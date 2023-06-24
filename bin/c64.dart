@@ -1,5 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:c64/assemble_command.dart';
+import 'package:c64/basicloader_command.dart';
 import 'package:c64/disassemble_command.dart';
 import 'package:c64/parse_basic_data_command.dart';
 
@@ -8,6 +9,7 @@ Future<int> main(List<String> args) async {
     ..addCommand(ParseBasicDataCommand())
     ..addCommand(DisassembleCommand())
     ..addCommand(AssembleCommand())
+    ..addCommand(BasicLoaderCommand())
     ..argParser.addFlag('verbose', abbr: 'v', help: 'increase logging');
 
   final result = await runner.run(args);
