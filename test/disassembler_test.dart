@@ -36,4 +36,19 @@ void main() {
         addInstructionDescription: true, addBytes: true);
     print(output);
   });
+
+  test('should disassemble input with short hex syntax', () async {
+    // TODO can I have async setup?
+    final disassembler = Disassembler();
+    await disassembler.initialize();
+
+    final input = [
+      0xA,
+    ];
+
+    Uint8List bytes = Uint8List.fromList(input);
+
+    final program = disassembler.disassemble(bytes);
+    expect(program.instructions[0].instruction.instruction, 'ASL');
+  });
 }

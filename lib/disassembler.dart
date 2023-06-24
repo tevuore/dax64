@@ -32,7 +32,7 @@ class Disassembler {
         throw AssemblerError('Unknown opcode: ${opcode.toRadixString(16)}');
       }
       var instruction = opcodeMap[opcode];
-      final opcodeToLookFor = '0x${opcode.toRadixString(16)}';
+      final opcodeToLookFor = '0x${opcode.toRadixString(16).padLeft(2, '0')}';
       Opcode opcodeObj;
 
       // TODO smarter data structure / find
