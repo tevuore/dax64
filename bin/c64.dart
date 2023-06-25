@@ -1,6 +1,6 @@
 import 'package:args/command_runner.dart';
-import 'package:c64/basic_loader_command.dart';
 import 'package:c64/command/assemble_command.dart';
+import 'package:c64/command/basic_loader_command.dart';
 import 'package:c64/command/disassemble_command.dart';
 import 'package:c64/command/parse_basic_data_command.dart';
 
