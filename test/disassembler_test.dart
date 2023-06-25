@@ -2,13 +2,16 @@ import 'dart:typed_data';
 
 import 'package:c64/disassembler.dart';
 import 'package:c64/formatter/program_formatter.dart';
+import 'package:c64/models/generated/index.dart';
+import 'package:c64/opcodes_store.dart';
 import 'package:test/test.dart';
 
 void main() {
+  late Opcodes opcodes;
   late Disassembler disassembler;
   setUp(() async {
-    disassembler = Disassembler();
-    await disassembler.initialize();
+    opcodes = await readOpcodes();
+    disassembler = Disassembler(opcodes: opcodes);
   });
 
   group("disassembler", () {

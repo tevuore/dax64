@@ -2,6 +2,7 @@ import 'package:c64/command/command_base.dart';
 import 'package:c64/disassembler.dart';
 import 'package:c64/errors.dart';
 import 'package:c64/formatter/program_formatter.dart';
+import 'package:c64/opcodes_store.dart';
 
 class DisassembleCommand extends CommandBase {
   @override
@@ -27,9 +28,9 @@ class DisassembleCommand extends CommandBase {
   @override
   Future<int> runCommand() async {
     final bytes = await readInputBytesFile();
+    final opcodes = await readOpcodes();
 
-    final disassembler = Disassembler();
-    await disassembler.initialize();
+    final disassembler = Disassembler(opcodes: opcodes);
 
     final program = disassembler.disassemble(bytes);
     final output = ProgramFormatter.format(program,

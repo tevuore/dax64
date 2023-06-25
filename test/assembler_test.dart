@@ -1,12 +1,15 @@
 import 'package:c64/assembler.dart';
 import 'package:c64/formatter/hex_formatter.dart';
+import 'package:c64/models/generated/index.dart';
+import 'package:c64/opcodes_store.dart';
 import 'package:test/test.dart';
 
 void main() {
+  late Opcodes opcodes;
   late Assembler assembler;
   setUp(() async {
-    assembler = Assembler();
-    await assembler.initialize();
+    opcodes = await readOpcodes();
+    assembler = Assembler(opcodes: opcodes);
   });
 
   test('should assemble input to bytes', () async {

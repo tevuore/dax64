@@ -2,19 +2,13 @@ import 'dart:typed_data';
 
 import 'package:c64/addressing_modes.dart';
 import 'package:c64/models/generated/index.dart';
-import 'package:c64/opcodes_store.dart';
 import 'package:c64/utils/hex8bit.dart';
 
 class Assembler {
-  late Opcodes opcodes;
+  final Opcodes opcodes;
   final Map<String, Instruction> opcodeMap = {};
 
-  Assembler();
-
-  Future initialize() async {
-    opcodes = await readOpcodeJsonFile(
-        'data/opcodes.json'); // TODO: fix this path somewhere
-
+  Assembler({required this.opcodes}) {
     for (var instruction in opcodes.instructions) {
       opcodeMap[instruction.instruction] = instruction;
     }

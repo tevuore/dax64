@@ -2,6 +2,7 @@ import 'package:c64/assembler.dart';
 import 'package:c64/command/command_base.dart';
 import 'package:c64/errors.dart';
 import 'package:c64/formatter/hex_formatter.dart';
+import 'package:c64/opcodes_store.dart';
 
 class AssembleCommand extends CommandBase {
   @override
@@ -24,9 +25,9 @@ class AssembleCommand extends CommandBase {
   @override
   Future<int> runCommand() async {
     final input = await readInputStringFile();
+    final opcodes = await readOpcodes();
 
-    final assembler = Assembler();
-    await assembler.initialize();
+    final assembler = Assembler(opcodes: opcodes);
     final bytes = assembler.assemble(input);
 
     if (isOutputFileDefined()) {
