@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:c64/command/parse_basic_data_command.dart';
 import 'package:c64/models/instruction.dart';
-import 'package:c64/parse_basic_data_command.dart';
 import 'package:c64/utils/hex8bit.dart';
 
 class HexFormatter {
@@ -13,7 +13,7 @@ class HexFormatter {
 
   static Uint8List formatToBytes(Program program) {
     final buffer = Uint8List(program.instructions.length * 3);
-    
+
     for (var instruction in program.instructions) {
       buffer.add(parse8BitHex(instruction.opcode.opcode));
       if (instruction.paramBytes.isNotEmpty) {

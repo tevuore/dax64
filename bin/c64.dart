@@ -1,8 +1,8 @@
 import 'package:args/command_runner.dart';
-import 'package:c64/assemble_command.dart';
 import 'package:c64/basic_loader_command.dart';
-import 'package:c64/disassemble_command.dart';
-import 'package:c64/parse_basic_data_command.dart';
+import 'package:c64/command/assemble_command.dart';
+import 'package:c64/command/disassemble_command.dart';
+import 'package:c64/command/parse_basic_data_command.dart';
 
 Future<int> main(List<String> args) async {
   final runner = CommandRunner("c64", "Commodore 64 machine code utilities")
