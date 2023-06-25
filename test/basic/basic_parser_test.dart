@@ -1,4 +1,4 @@
-import 'package:c64/basic_parser.dart' as basic_parser;
+import 'package:c64/basic/basic_parser.dart' as basic_parser;
 import 'package:test/test.dart';
 
 void main() {

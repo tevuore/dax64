@@ -1,6 +1,6 @@
-import 'package:c64/basic_parser.dart' as basic_parser;
+import 'package:c64/basic/basic_parser.dart' as basic_parser;
 import 'package:c64/command/command_base.dart';
-import 'package:c64/errors.dart';
+import 'package:c64/command/errors.dart';
 import 'package:c64/formatter/hex_formatter.dart';
 
 class ParseBasicDataCommand extends CommandBase {

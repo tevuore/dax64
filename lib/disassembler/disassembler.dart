@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:c64/errors.dart';
+import 'package:c64/assembler/errors.dart';
 import 'package:c64/models/generated/opcodes.dart';
 import 'package:c64/models/instruction.dart';
 import 'package:c64/utils/hex8bit.dart';

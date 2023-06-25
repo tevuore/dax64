@@ -1,8 +1,8 @@
-import 'package:c64/assembler.dart';
+import 'package:c64/assembler/assembler.dart';
 import 'package:c64/command/command_base.dart';
-import 'package:c64/errors.dart';
+import 'package:c64/command/errors.dart';
 import 'package:c64/formatter/hex_formatter.dart';
-import 'package:c64/opcodes_store.dart';
+import 'package:c64/opcodes_loader.dart';
 
 class AssembleCommand extends CommandBase {
   @override

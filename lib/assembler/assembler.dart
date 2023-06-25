@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:c64/addressing_modes.dart';
+import 'package:c64/assembler/addressing_modes.dart';
 import 'package:c64/models/generated/index.dart';
 import 'package:c64/utils/hex8bit.dart';
 
