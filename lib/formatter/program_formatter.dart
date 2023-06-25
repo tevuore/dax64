@@ -48,8 +48,8 @@ String outputWithAddressMode(Opcode opcode, Uint8List paramBytes) {
     return '';
   }
 
-  // TODO could we have address mode as enum?
-  // TODO bytes and cycles could be ints
+  // TODO could we have address mode as enum? check lib
+  // TODO bytes and cycles could be ints -> in conversion script
 
   switch (opcode.addressMode) {
     case 'Accumulator':

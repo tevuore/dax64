@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:c64/assembler/addressing_modes.dart';
+import 'package:c64/assembler/errors.dart';
 import 'package:c64/models/generated/index.dart';
 import 'package:c64/utils/hex8bit.dart';
 
@@ -22,9 +23,9 @@ class Assembler {
       if (trimmedLine.isEmpty) {
         continue;
       }
-      final parts = trimmedLine
-          .split(';'); // TODO this logic does not support multiple comments
-      final commandPart = parts[0].trim(); // TODO test plain command line
+      // TODO this logic does not support multiple comments
+      final parts = trimmedLine.split(';');
+      final commandPart = parts[0].trim();
 
       // only comment line?
       if (commandPart.isEmpty) {
@@ -36,7 +37,7 @@ class Assembler {
       final instruction = commandParts[0].toUpperCase();
       final instructionObj = opcodeMap[instruction];
       if (instructionObj == null) {
-        throw Exception('Unknown instruction: $instruction');
+        throw AssemblerError('Unknown instruction: $instruction');
       }
 
       if (commandParts.length > 1) {
@@ -61,9 +62,8 @@ class Assembler {
     // special case for relative addressing mode
     if (isRelativeJumpInstruction(instruction) &&
         addressingMode == AddressingMode.absolute) {
-      throw Exception(
+      throw NotImplementedAssemblerError(
           'Relative addressing mode not implemented for instruction: ${instruction.instruction}');
-      // return (AddressingMode.relative, Uint8List.fromList([operandBytes[1]]));
     }
 
     return (
