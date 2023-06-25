@@ -3,11 +3,13 @@ import 'package:c64/formatter/hex_formatter.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('should assemble input to bytes', () async {
-    // TODO can I have async setup?
-    final assembler = Assembler();
+  late Assembler assembler;
+  setUp(() async {
+    assembler = Assembler();
     await assembler.initialize();
+  });
 
+  test('should assemble input to bytes', () async {
     final input = r'''
     LDY #$00       ; Load Y
     TYA            ; Transfer Y to Accumulator
@@ -27,10 +29,6 @@ void main() {
   });
 
   test('should assemble immediate address mode', () async {
-    // TODO can I have async setup?
-    final assembler = Assembler();
-    await assembler.initialize();
-
     final input = r'LDA #$05';
     final bytes = assembler.assemble(input);
 

@@ -5,12 +5,14 @@ import 'package:c64/formatter/program_formatter.dart';
 import 'package:test/test.dart';
 
 void main() {
+  late Disassembler disassembler;
+  setUp(() async {
+    disassembler = Disassembler();
+    await disassembler.initialize();
+  });
+
   group("disassembler", () {
     test('should disassemble input', () async {
-      // TODO can I have async setup?
-      final disassembler = Disassembler();
-      await disassembler.initialize();
-
       final input = [
         0xA0,
         0x00,
@@ -39,10 +41,6 @@ void main() {
     });
 
     test('should disassemble input with short hex syntax', () async {
-      // TODO can I have async setup?
-      final disassembler = Disassembler();
-      await disassembler.initialize();
-
       final input = [
         0xA,
       ];
