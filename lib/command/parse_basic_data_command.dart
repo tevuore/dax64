@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:args/command_runner.dart';
 import 'package:c64/basic_parser.dart' as basic_parser;
-import 'package:c64/hex_formatter.dart';
+import 'package:c64/formatter/hex_formatter.dart';
 
 class ParseBasicDataCommand extends Command {
   @override

@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:args/command_runner.dart';
 import 'package:c64/disassembler.dart';
 import 'package:c64/errors.dart';
-import 'package:c64/program_formatter.dart';
+import 'package:c64/formatter/program_formatter.dart';
 
 class DisassembleCommand extends Command {
   @override

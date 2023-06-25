@@ -1,5 +1,5 @@
 import 'package:c64/assembler.dart';
-import 'package:c64/hex_formatter.dart';
+import 'package:c64/formatter/hex_formatter.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:c64/disassembler.dart';
-import 'package:c64/program_formatter.dart';
+import 'package:c64/formatter/program_formatter.dart';
 import 'package:test/test.dart';
 
 void main() {

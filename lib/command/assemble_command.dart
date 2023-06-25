@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:args/command_runner.dart';
 import 'package:c64/assembler.dart';
 import 'package:c64/errors.dart';
-import 'package:c64/hex_formatter.dart';
+import 'package:c64/formatter/hex_formatter.dart';
 
 class AssembleCommand extends Command {
   @override
