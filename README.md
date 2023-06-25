@@ -7,7 +7,12 @@ c64 is collection of tools do handle Commodore 64 machine code.
 
 Example:
 
-    dart run bin/c64.dart commit --file jsons/employee.json
+    # Create basic program to load machine code
+    $ dart run bin/c64.dart basicloader --input-file program.bin --output-file asm_program.bas
+    # Detokenize
+    $ ./basicload.sh asm_program.bas
+    # Run
+    $ x64 -basicload asm_program.bas.prg
 
 # Building
 
