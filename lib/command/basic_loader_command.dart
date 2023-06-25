@@ -1,11 +1,8 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:args/command_runner.dart';
 import 'package:c64/basic_loader.dart';
+import 'package:c64/command/command_base.dart';
 import 'package:c64/errors.dart';
 
-class BasicLoaderCommand extends Command {
+class BasicLoaderCommand extends CommandBase {
   @override
   final name = "basicloader";
   @override
@@ -17,46 +14,25 @@ class BasicLoaderCommand extends Command {
   }
 
   @override
-  Future<int> run() async {
-    try {
-      // TODO generic checked
-      if (!isInputFileDefined()) {
-        throw InvalidInputError("Option 'input-file' is mandatory");
-      }
-
-      final bytes = await readBytes();
-
-      final loader = BasicLoader();
-      final output = loader.wrap(bytes);
-
-      if (isOutputFileDefined()) {
-        await writeToOutputFile(output);
-      } else {
-        print(output);
-      }
-
-      return 0;
-    } catch (e) {
-      print(e);
-      return 1;
+  void verifyInputs() {
+    if (!isInputFileDefined()) {
+      throw InvalidInputError("Option 'input-file' is mandatory");
     }
   }
 
-  bool isInputFileDefined() {
-    return argResults!.wasParsed('input-file');
-  }
+  @override
+  Future<int> runCommand() async {
+    final bytes = await readInputBytesFile();
 
-  bool isOutputFileDefined() {
-    return argResults!.wasParsed('output-file');
-  }
+    final loader = BasicLoader();
+    final output = loader.wrap(bytes);
 
-  Future writeToOutputFile(String data) async {
-    final outputFile = argResults!['output-file'];
-    File(outputFile).writeAsString(data);
-  }
+    if (isOutputFileDefined()) {
+      await writeToOutputFile(output);
+    } else {
+      print(output);
+    }
 
-  Future<Uint8List> readBytes() async {
-    final path = argResults!['input-file'];
-    return await File(path).readAsBytes();
+    return 0;
   }
 }

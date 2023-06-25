@@ -1,11 +1,9 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:args/command_runner.dart';
 import 'package:c64/basic_parser.dart' as basic_parser;
+import 'package:c64/command/command_base.dart';
+import 'package:c64/errors.dart';
 import 'package:c64/formatter/hex_formatter.dart';
 
-class ParseBasicDataCommand extends Command {
+class ParseBasicDataCommand extends CommandBase {
   @override
   final name = "parsebasicdata";
   @override
@@ -17,14 +15,15 @@ class ParseBasicDataCommand extends Command {
   }
 
   @override
-  Future<int> run() async {
-    // TODO generic checked
+  void verifyInputs() {
     if (!isInputFileDefined()) {
-      print("ERROR: Option 'input-file' is mandatory");
-      return 1;
+      throw InvalidInputError("Option 'input-file' is mandatory");
     }
+  }
 
-    final bytes = basic_parser.parse(await readInputFile());
+  @override
+  Future<int> runCommand() async {
+    final bytes = basic_parser.parse(await readInputStringFile());
 
     if (isOutputFileDefined()) {
       await writeHexCodesToOutputFile(bytes);
@@ -34,27 +33,4 @@ class ParseBasicDataCommand extends Command {
 
     return 0;
   }
-
-  bool isInputFileDefined() {
-    return argResults!.wasParsed('input-file');
-  }
-
-  bool isOutputFileDefined() {
-    return argResults!.wasParsed('output-file');
-  }
-
-  Future writeHexCodesToOutputFile(Uint8List bytes) async {
-    final outputFile = argResults!['output-file'];
-    File(outputFile).writeAsBytes(bytes);
-  }
-
-  Future<String> readInputFile() async {
-    final path = argResults!['input-file'];
-    return await File(path).readAsString();
-  }
-}
-
-// TODO move to utils package
-String uint8ToHex(int uint8) {
-  return uint8.toRadixString(16).padLeft(2, '0').toUpperCase();
 }

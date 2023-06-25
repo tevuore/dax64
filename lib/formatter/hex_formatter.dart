@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:c64/command/parse_basic_data_command.dart';
 import 'package:c64/models/instruction.dart';
 import 'package:c64/utils/hex8bit.dart';
 

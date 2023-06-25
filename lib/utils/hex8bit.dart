@@ -1,5 +1,9 @@
 import 'dart:typed_data';
 
+String uint8ToHex(int uint8) {
+  return uint8.toRadixString(16).padLeft(2, '0').toUpperCase();
+}
+
 int parse8BitHex(String hex) {
   return int.parse(hex.replaceFirst('0x', ''), radix: 16);
 }

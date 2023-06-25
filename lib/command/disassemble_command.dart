@@ -1,12 +1,9 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:args/command_runner.dart';
+import 'package:c64/command/command_base.dart';
 import 'package:c64/disassembler.dart';
 import 'package:c64/errors.dart';
 import 'package:c64/formatter/program_formatter.dart';
 
-class DisassembleCommand extends Command {
+class DisassembleCommand extends CommandBase {
   @override
   final name = "disassemble";
   @override
@@ -21,51 +18,30 @@ class DisassembleCommand extends Command {
   }
 
   @override
-  Future<int> run() async {
-    try {
-      // TODO generic checked
-      if (!isInputFileDefined()) {
-        throw InvalidInputError("Option 'input-file' is mandatory");
-      }
-
-      final bytes = await readBytes();
-
-      final disassembler = Disassembler();
-      await disassembler.initialize();
-
-      final program = disassembler.disassemble(bytes);
-      final output = ProgramFormatter.format(program,
-          addInstructionDescription: argResults!['add-instruction-description'],
-          addBytes: argResults!['add-bytes']);
-
-      if (isOutputFileDefined()) {
-        await writeToOutputFile(output);
-      } else {
-        print(output);
-      }
-
-      return 0;
-    } catch (e) {
-      print(e);
-      return 1;
+  void verifyInputs() {
+    if (!isInputFileDefined()) {
+      throw InvalidInputError("Option 'input-file' is mandatory");
     }
   }
 
-  bool isInputFileDefined() {
-    return argResults!.wasParsed('input-file');
-  }
+  @override
+  Future<int> runCommand() async {
+    final bytes = await readInputBytesFile();
 
-  bool isOutputFileDefined() {
-    return argResults!.wasParsed('output-file');
-  }
+    final disassembler = Disassembler();
+    await disassembler.initialize();
 
-  Future writeToOutputFile(String data) async {
-    final outputFile = argResults!['output-file'];
-    File(outputFile).writeAsString(data);
-  }
+    final program = disassembler.disassemble(bytes);
+    final output = ProgramFormatter.format(program,
+        addInstructionDescription: argResults!['add-instruction-description'],
+        addBytes: argResults!['add-bytes']);
 
-  Future<Uint8List> readBytes() async {
-    final path = argResults!['input-file'];
-    return await File(path).readAsBytes();
+    if (isOutputFileDefined()) {
+      await writeToOutputFile(output);
+    } else {
+      print(output);
+    }
+
+    return 0;
   }
 }
