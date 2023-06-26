@@ -231,7 +231,7 @@ class Parser {
   }
 
   bool isOpcode(String input) {
-    return opcodeMap.containsKey(input.toUpperCase());
+    return input.startsWith('.') || opcodeMap.containsKey(input.toUpperCase());
   }
 
   // return opcode and operand value as string

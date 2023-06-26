@@ -96,4 +96,26 @@ void main() {
     final elements = parser.parse(input);
     expect(elements.length, equals(0));
   });
+
+  test('should parse .BYTE with multiple values', () async {
+    final input = r'LABEL1  .BYTE $00,$01,$02   ; characters';
+
+    final elements = parser.parse(input);
+    expect(elements.length, equals(1));
+    expect(elements[0].label, equals('LABEL1'));
+    expect(elements[0].instruction, equals('.BYTE'));
+    expect(elements[0].operand, equals(r'$00,$01,$02'));
+    expect(elements[0].comment, equals('characters'));
+  });
+
+  test('should parse .BYTE', () async {
+    final input = r'LABEL1  .BYTE $00    ; starting char';
+
+    final elements = parser.parse(input);
+    expect(elements.length, equals(1));
+    expect(elements[0].label, equals('LABEL1'));
+    expect(elements[0].instruction, equals('.BYTE'));
+    expect(elements[0].operand, equals(r'$00'));
+    expect(elements[0].comment, equals('starting char'));
+  });
 }
