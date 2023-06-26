@@ -22,6 +22,15 @@ First you need to generate model classes from json, run
 The json_to_model uses flutter foundation package which is not available in plain Dart.
 Replace flutter foundation import with meta package.
 
+# IDE
+
+To easy setup for beginners here are notes of my IDE setup.
+
+Developed with Android Studio Flamingo | 2022.2.1 Patch 1.
+
+Plugins
+* Dart
+
 # Byte handling in Dart
 
 Dart doesn't support 8-bit byte as data type. Instead they need to be handled

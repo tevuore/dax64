@@ -1,6 +1,4 @@
-import 'dart:typed_data';
 
-import 'package:c64/utils/hex8bit.dart';
 
 enum AddressingMode {
   absolute,
@@ -74,102 +72,72 @@ bool areSameAddressingModes(String a, AddressingMode b) {
   }
 }
 
-(AddressingMode, Uint8List) parseOperands(String input) {
+(AddressingMode, String) parseOperands(String input) {
   final data = input.trim();
   if (data.isEmpty) {
-    return (AddressingMode.implied, Uint8List.fromList([]));
+    return (AddressingMode.implied, '');
   }
   if (data == 'A') {
-    return (AddressingMode.accumulator, Uint8List.fromList([]));
+    return (AddressingMode.accumulator, '');
   }
   var regex = RegExp(r'^#\$([0-9A-Fa-f]{1,2})$');
   var match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.immediate,
-      Uint8List.fromList([parse8BitHex(match.group(1)!)]),
-    );
+    return (AddressingMode.immediate, match.group(1)!);
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{4})$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.absolute,
-      parse16BitHex(match.group(1)!),
-    );
+    return (AddressingMode.absolute, match.group(1)!);
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{4}),[xX]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.absoluteX,
-      parse16BitHex(match.group(1)!),
-    );
+    return (AddressingMode.absoluteX, match.group(1)!);
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{4}),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.absoluteY,
-      parse16BitHex(match.group(1)!),
-    );
+    return (AddressingMode.absoluteY, match.group(1)!);
   }
 
   regex = RegExp(r'^\(\$([0-9A-Fa-f]{4})\)$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.indirect,
-      parse16BitHex(match.group(1)!),
-    );
+    return (AddressingMode.indirect, match.group(1)!);
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{1,2})$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.zeropage,
-      Uint8List.fromList([parse8BitHex(match.group(1)!)]),
-    );
+    return (AddressingMode.zeropage, match.group(1)!);
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{1,2}),[xX]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.zeropageX,
-      Uint8List.fromList([parse8BitHex(match.group(1)!)]),
-    );
+    return (AddressingMode.zeropageX, match.group(1)!);
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{1,2}),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.zeropageY,
-      Uint8List.fromList([parse8BitHex(match.group(1)!)]),
-    );
+    return (AddressingMode.zeropageY, match.group(1)!);
   }
 
   regex = RegExp(r'^\(\$([0-9A-Fa-f]{1,2}),[xX]\)$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.indirectX,
-      Uint8List.fromList([parse8BitHex(match.group(1)!)]),
-    );
+    return (AddressingMode.indirectX, match.group(1)!);
   }
 
   regex = RegExp(r'^\(\$([0-9A-Fa-f]{1,2})\),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (
-      AddressingMode.indirectY,
-      Uint8List.fromList([parse8BitHex(match.group(1)!)]),
-    );
+    return (AddressingMode.indirectY, match.group(1)!);
   }
 
   // TODO: missing X-Indexed Zero Page Indirect

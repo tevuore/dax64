@@ -1,4 +1,5 @@
 import 'package:c64/assembler/parser.dart';
+import 'package:c64/models/asm_program.dart';
 import 'package:c64/models/generated/index.dart';
 import 'package:c64/opcodes_loader.dart';
 import 'package:test/test.dart';
@@ -23,19 +24,26 @@ void main() {
     RTS            ; Return from Subroutine
     ''';
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(8));
+    final lines = parser.parse(input).blocks[0].lines;
+    expect(lines.length, equals(8));
   });
+
+  AssemblyInstruction extractSingleAssemblyInstruction(AsmProgram program) {
+    final lines = program.blocks[0].lines;
+    expect(lines.length, equals(1));
+    return lines[0].statement as AssemblyInstruction;
+  }
 
   test('should parse opcode', () async {
     final input = r'LDY #$00       ; Load Y';
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(1));
-    expect(elements[0].label, isNull);
-    expect(elements[0].instruction, equals('LDY'));
-    expect(elements[0].operand, equals(r'#$00'));
-    expect(elements[0].comment, equals('Load Y'));
+    final program = parser.parse(input);
+    final line = program.blocks[0].lines[0];
+    final instruction = extractSingleAssemblyInstruction(program);
+    expect(instruction.label, isNull);
+    expect(instruction.instructionSpec.instruction, equals('LDY'));
+    expect(instruction.operand!.value, equals(r'$00'));
+    expect(line.comment, equals('Load Y'));
   });
 
   test('should parse opcode without operand', () async {

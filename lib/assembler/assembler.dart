@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:c64/assembler/addressing_modes.dart';
 import 'package:c64/assembler/errors.dart';
+import 'package:c64/assembler/parser.dart';
+import 'package:c64/models/asm_program.dart';
 import 'package:c64/models/generated/index.dart';
 import 'package:c64/utils/hex8bit.dart';
 
@@ -16,43 +18,55 @@ class Assembler {
   }
 
   Uint8List assemble(String input) {
+    final program = Parser(opcodes: opcodes).parse(input);
+
     final bytes = <int>[];
-    final lines = input.split('\n');
-    for (var line in lines) {
-      final trimmedLine = line.trim();
-      if (trimmedLine.isEmpty) {
+
+    // TODO make old behaviour working first
+    //  -> bytes = assembleOld(program);
+
+    for (final block in program.blocks) {
+      for (final line in block.lines) {
+        if (line.statement is AssemblyInstruction) {
+          final instruction = line.statement as AssemblyInstruction;
+          if (instruction.label != null) {}
+        }
+      }
+    }
+
+    // TODO: go through to find all assignments and labels (and later macros)
+
+    // TODO: then expand values and parse operands
+
+    // TODO: then assemble
+
+    for (final ele in elements) {
+      if (ele.instruction == null) {
         continue;
       }
-      // TODO this logic does not support multiple comments
-      final parts = trimmedLine.split(';');
-      final commandPart = parts[0].trim();
-
-      // only comment line?
-      if (commandPart.isEmpty) {
-        continue;
+      if (!opcodeMap.containsKey(ele.instruction)) {
+        throw AssemblerError('Unknown instruction: ${ele.instruction}');
       }
+      final instructionObj = opcodeMap[ele.instruction]!;
 
-      final commandParts =
-          commandPart.split(' '); // TODO: does not support optional whitespace
-      final instruction = commandParts[0].toUpperCase();
-      final instructionObj = opcodeMap[instruction];
-      if (instructionObj == null) {
-        throw AssemblerError('Unknown instruction: $instruction');
-      }
-
-      if (commandParts.length > 1) {
+      if (ele.operand != null) {
         final (opcodeObj, operandBytes) =
-            extractOperands(instructionObj, commandParts[1]);
+            extractOperands(instructionObj, ele.operand!);
         bytes.add(parse8BitHex(opcodeObj.opcode));
         bytes.addAll(operandBytes);
       } else {
         // no operands
-        final opcodeObj = instructionObj.opcodes
-            .firstWhere((element) => element.bytes.length == 1);
-
-        bytes.add(parse8BitHex(opcodeObj.opcode));
+        final opcodeObjs = instructionObj.opcodes
+            .where((element) => element.bytes.length == 1)
+            .toList();
+        if (opcodeObjs.isEmpty) {
+          throw AssemblerError(
+              'No unique implicit opcode found for instruction: ${instructionObj.instruction}');
+        }
+        bytes.add(parse8BitHex(opcodeObjs[0].opcode));
       }
     }
+
     return Uint8List.fromList(bytes);
   }
 
@@ -78,5 +92,3 @@ class Assembler {
         .every((element) => element.addressMode.endsWith("Rela"));
   }
 }
-
-// special case for relative addressing mode
