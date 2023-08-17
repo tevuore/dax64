@@ -2,3 +2,12 @@
 # Created by `dart pub`
 .dart_tool/
 .aider*
+
+# drawio temp files
+*.bkp
+*.dtmp
+
+# IDE
+.idea/
+*iml
+
