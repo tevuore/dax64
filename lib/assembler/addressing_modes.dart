@@ -1,4 +1,8 @@
+// TODO could we have attribute that defines whether operand bytes should be expected?
+import 'dart:typed_data';
 
+import 'package:c64/assembler/errors.dart';
+import 'package:c64/utils/hex8bit.dart';
 
 enum AddressingMode {
   absolute,
@@ -143,4 +147,40 @@ bool areSameAddressingModes(String a, AddressingMode b) {
   // TODO: missing X-Indexed Zero Page Indirect
   // TODO: missing Y-Indexed Zero Page Indirect
   throw Exception('Invalid addressing mode: $data');
+}
+
+// TODO could we pass full operand?
+/// convert operand value to bytes
+/// TODO input is assumed to be hex value
+Uint8List parseOperandValue(AddressingMode addressingMode, String? input) {
+  switch (addressingMode) {
+    case AddressingMode.implied:
+    case AddressingMode.accumulator:
+      return Uint8List.fromList([]);
+
+    case AddressingMode.immediate:
+    case AddressingMode.zeropage:
+    case AddressingMode.zeropageX:
+    case AddressingMode.zeropageY:
+    case AddressingMode.indirectX:
+    case AddressingMode.indirectY:
+      if (input == null) {
+        throw AssemblerError(
+            'Addressing mode ${addressingMode.toString()} requires value but it was null ');
+      }
+      return Uint8List.fromList([parse8BitHex(input)]);
+
+    case AddressingMode.absolute:
+    case AddressingMode.absoluteX:
+    case AddressingMode.absoluteY:
+    case AddressingMode.indirect:
+      if (input == null) {
+        throw AssemblerError(
+            'Addressing mode ${addressingMode.toString()} requires value but it was null ');
+      }
+      return parse16BitHex(input);
+
+    case AddressingMode.relative:
+      throw AssemblerError('Relative addressing mode not yet implemented');
+  }
 }

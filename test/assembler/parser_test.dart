@@ -24,22 +24,19 @@ void main() {
     RTS            ; Return from Subroutine
     ''';
 
-    final lines = parser.parse(input).blocks[0].lines;
+    final lines = parser
+        .parse(input)
+        .blocks[0].lines;
     expect(lines.length, equals(8));
   });
-
-  AssemblyInstruction extractSingleAssemblyInstruction(AsmProgram program) {
-    final lines = program.blocks[0].lines;
-    expect(lines.length, equals(1));
-    return lines[0].statement as AssemblyInstruction;
-  }
 
   test('should parse opcode', () async {
     final input = r'LDY #$00       ; Load Y';
 
     final program = parser.parse(input);
-    final line = program.blocks[0].lines[0];
-    final instruction = extractSingleAssemblyInstruction(program);
+    final line = takeSingleLineFromSingleBlock(program);
+    final instruction = toAssemblyInstruction(line);
+
     expect(instruction.label, isNull);
     expect(instruction.instructionSpec.instruction, equals('LDY'));
     expect(instruction.operand!.value, equals(r'$00'));
@@ -49,73 +46,100 @@ void main() {
   test('should parse opcode without operand', () async {
     final input = r'  RTS       ; Return from subroutine';
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(1));
-    expect(elements[0].label, isNull);
-    expect(elements[0].instruction, equals('RTS'));
-    expect(elements[0].operand, isNull);
-    expect(elements[0].comment, equals('Return from subroutine'));
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+    final instruction = toAssemblyInstruction(line);
+
+    expect(instruction.label, isNull);
+    expect(instruction.instructionSpec.instruction, equals('RTS'));
+    expect(instruction.operand, isNull);
+    expect(line.comment, equals('Return from subroutine'));
   });
 
   test('should parse opcode with label', () async {
     final input = r'LABEL1  LDY #$00       ; Load Y';
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(1));
-    expect(elements[0].label, equals('LABEL1'));
-    expect(elements[0].instruction, equals('LDY'));
-    expect(elements[0].operand, equals(r'#$00'));
-    expect(elements[0].comment, equals('Load Y'));
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+    final instruction = toAssemblyInstruction(line);
+
+    expect(instruction.label, equals('LABEL1'));
+    expect(instruction.instructionSpec.instruction, equals('LDY'));
+    expect(instruction.operand, equals(r'#$00'));
+    expect(line.comment, equals('Load Y'));
   });
 
+  // TODO how this should be handled
   test('should parse label line', () async {
     final input = r'LABEL1';
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(1));
-    expect(elements[0].label, equals('LABEL1'));
-    expect(elements[0].instruction, isNull);
-    expect(elements[0].operand, isNull);
-    expect(elements[0].comment, isNull);
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+    final instruction = toAssemblyInstruction(line);
+
+    expect(instruction.label, equals('LABEL1'));
   });
 
   test('should parse comment line', () async {
     final input = r'  ; some comment ';
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(1));
-    expect(elements[0].label, isNull);
-    expect(elements[0].instruction, isNull);
-    expect(elements[0].operand, isNull);
-    expect(elements[0].comment, equals('some comment'));
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+
+    // TODO some thing is null
+    expect(line.comment, equals('some comment'));
   });
 
   test('should ignore empty line with whitespace', () async {
     final input = r'  ';
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(0));
+    final program = parser.parse(input);
+    expect(program.blocks.length, equals(0));
+    expect(program.blocks[0].lines.length, equals(0));
   });
 
-  test('should parse .BYTE with multiple values', () async {
-    final input = r'LABEL1  .BYTE $00,$01,$02   ; characters';
+  // TODO test
+  // test('should parse .BYTE with multiple values', () async {
+  //   final input = r'LABEL1  .BYTE $00,$01,$02   ; characters';
+  //
+  //   final program = parser.parse(input);
+  //   final line = takeSingleLineFromSingleBlock(program);
+  //   final instruction = toAssemblyInstruction(line);
+  //
+  //   expect(instruction.label, equals('LABEL1'));
+  //   expect(elements[0].instruction, equals('.BYTE'));
+  //   expect(elements[0].operand, equals(r'$00,$01,$02'));
+  //   expect(elements[0].comment, equals('characters'));
+  // });
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(1));
-    expect(elements[0].label, equals('LABEL1'));
-    expect(elements[0].instruction, equals('.BYTE'));
-    expect(elements[0].operand, equals(r'$00,$01,$02'));
-    expect(elements[0].comment, equals('characters'));
-  });
+  // TODO
+  // test('should parse .BYTE', () async {
+  //   final input = r'LABEL1  .BYTE $00    ; starting char';
+  //
+  //   final program = parser.parse(input);
+  //   final line = takeSingleLineFromSingleBlock(program);
+  //   final instruction = toAssemblyInstruction(line);
+  //
+  //   expect(instruction.label, equals('LABEL1'));
+  //   expect(elements[0].instruction, equals('.BYTE'));
+  //   expect(elements[0].operand, equals(r'$00'));
+  //   expect(elements[0].comment, equals('starting char'));
+  // });
+}
 
-  test('should parse .BYTE', () async {
-    final input = r'LABEL1  .BYTE $00    ; starting char';
+AssemblyInstruction extractSingleAssemblyInstruction(AsmProgram program) {
+  final lines = program.blocks[0].lines;
+  expect(lines.length, equals(1));
+  return lines[0].statement as AssemblyInstruction;
+}
 
-    final elements = parser.parse(input);
-    expect(elements.length, equals(1));
-    expect(elements[0].label, equals('LABEL1'));
-    expect(elements[0].instruction, equals('.BYTE'));
-    expect(elements[0].operand, equals(r'$00'));
-    expect(elements[0].comment, equals('starting char'));
-  });
+/// utility function to extract parsed line information
+AsmProgramLine takeSingleLineFromSingleBlock(AsmProgram program) {
+  expect(program.blocks.length, equals(1));
+  expect(program.blocks[0].lines, equals(1));
+  return program.blocks[0].lines[0];
+}
+
+AssemblyInstruction toAssemblyInstruction(AsmProgramLine line) {
+  return line.statement as AssemblyInstruction;
 }

@@ -29,62 +29,50 @@ class Assembler {
       for (final line in block.lines) {
         if (line.statement is AssemblyInstruction) {
           final instruction = line.statement as AssemblyInstruction;
-          if (instruction.label != null) {}
+
+          if (instruction.shouldAssemble) {
+            if (instruction.operand != null) {
+              bytes.add(parse8BitHex(instruction.opcode.opcode));
+
+              // operand value is string - it could be label or macro ref, but
+              // that is not yet implemented
+
+              // TODO why opcode has addressing mode as string? could it have as enum?
+              // special case for relative addressing mode
+              if (isRelativeJumpInstruction(instruction.instructionSpec) &&
+                  instruction.operand!.addressingMode ==
+                      AddressingMode.absolute) {
+                throw NotImplementedAssemblerError(
+                    'Relative addressing mode not implemented for instruction: ${instruction
+                        .instructionSpec.instruction}');
+              }
+
+              // TODO not nicest way to force non null
+              final operandBytes = parseOperandValue(
+                  instruction.operand!.addressingMode,
+                  instruction.operand!.value);
+              bytes.addAll(operandBytes);
+            } else {
+              // no operands
+              // TODO is the naming BEST
+              bytes.add(parse8BitHex(instruction.opcode.opcode));
+            }
+          }
         }
+
+        // TODO at first stage support just assembly statements
+        // TODO at 2nd phase data blocks
+        // TODO then macros
+        // TODO what about plain comment lines, are they already skipped
       }
     }
 
+    // TODO final plan!!
     // TODO: go through to find all assignments and labels (and later macros)
-
     // TODO: then expand values and parse operands
-
     // TODO: then assemble
 
-    for (final ele in elements) {
-      if (ele.instruction == null) {
-        continue;
-      }
-      if (!opcodeMap.containsKey(ele.instruction)) {
-        throw AssemblerError('Unknown instruction: ${ele.instruction}');
-      }
-      final instructionObj = opcodeMap[ele.instruction]!;
-
-      if (ele.operand != null) {
-        final (opcodeObj, operandBytes) =
-            extractOperands(instructionObj, ele.operand!);
-        bytes.add(parse8BitHex(opcodeObj.opcode));
-        bytes.addAll(operandBytes);
-      } else {
-        // no operands
-        final opcodeObjs = instructionObj.opcodes
-            .where((element) => element.bytes.length == 1)
-            .toList();
-        if (opcodeObjs.isEmpty) {
-          throw AssemblerError(
-              'No unique implicit opcode found for instruction: ${instructionObj.instruction}');
-        }
-        bytes.add(parse8BitHex(opcodeObjs[0].opcode));
-      }
-    }
-
     return Uint8List.fromList(bytes);
-  }
-
-  (Opcode, Uint8List) extractOperands(Instruction instruction, String input) {
-    final (addressingMode, operandBytes) = parseOperands(input);
-
-    // special case for relative addressing mode
-    if (isRelativeJumpInstruction(instruction) &&
-        addressingMode == AddressingMode.absolute) {
-      throw NotImplementedAssemblerError(
-          'Relative addressing mode not implemented for instruction: ${instruction.instruction}');
-    }
-
-    return (
-      instruction.opcodes.firstWhere((element) =>
-          areSameAddressingModes(element.addressMode, addressingMode)),
-      operandBytes
-    );
   }
 
   bool isRelativeJumpInstruction(Instruction instruction) {

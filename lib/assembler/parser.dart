@@ -69,7 +69,7 @@ class Parser {
       line = line.substring(0, indexOfSemiComma).trim();
     }
 
-    // is is data declaration? With or without label
+    // is it data declaration? With or without label
     // TODO improve regex to work properly with label+whitespace
     regex = RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*\.([a-zA-Z]+)[ ]+(.*)$');
     var m = regex.firstMatch(line);
