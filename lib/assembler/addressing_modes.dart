@@ -2,7 +2,7 @@
 import 'dart:typed_data';
 
 import 'package:c64/assembler/errors.dart';
-import 'package:c64/utils/hex8bit.dart';
+import 'package:c64/models/asm_program.dart';
 
 enum AddressingMode {
   absolute,
@@ -76,72 +76,72 @@ bool areSameAddressingModes(String a, AddressingMode b) {
   }
 }
 
-(AddressingMode, String) parseOperands(String input) {
+(AddressingMode, OperandValue) parseOperands(String input) {
   final data = input.trim();
   if (data.isEmpty) {
-    return (AddressingMode.implied, '');
+    return (AddressingMode.implied, EmptyOperandValue());
   }
   if (data == 'A') {
-    return (AddressingMode.accumulator, '');
+    return (AddressingMode.accumulator, EmptyOperandValue());
   }
   var regex = RegExp(r'^#\$([0-9A-Fa-f]{1,2})$');
   var match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.immediate, match.group(1)!);
+    return (AddressingMode.immediate, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{4})$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.absolute, match.group(1)!);
+    return (AddressingMode.absolute, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{4}),[xX]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.absoluteX, match.group(1)!);
+    return (AddressingMode.absoluteX, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{4}),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.absoluteY, match.group(1)!);
+    return (AddressingMode.absoluteY, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\(\$([0-9A-Fa-f]{4})\)$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.indirect, match.group(1)!);
+    return (AddressingMode.indirect, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{1,2})$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.zeropage, match.group(1)!);
+    return (AddressingMode.zeropage, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{1,2}),[xX]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.zeropageX, match.group(1)!);
+    return (AddressingMode.zeropageX, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\$([0-9A-Fa-f]{1,2}),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.zeropageY, match.group(1)!);
+    return (AddressingMode.zeropageY, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\(\$([0-9A-Fa-f]{1,2}),[xX]\)$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.indirectX, match.group(1)!);
+    return (AddressingMode.indirectX, HexOperandValue.build(match.group(1)!));
   }
 
   regex = RegExp(r'^\(\$([0-9A-Fa-f]{1,2})\),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.indirectY, match.group(1)!);
+    return (AddressingMode.indirectY, HexOperandValue.build(match.group(1)!));
   }
 
   // TODO: missing X-Indexed Zero Page Indirect
@@ -152,7 +152,7 @@ bool areSameAddressingModes(String a, AddressingMode b) {
 // TODO could we pass full operand?
 /// convert operand value to bytes
 /// TODO input is assumed to be hex value
-Uint8List parseOperandValue(AddressingMode addressingMode, String? input) {
+Uint8List parseOperandValue(AddressingMode addressingMode, OperandValue input) {
   switch (addressingMode) {
     case AddressingMode.implied:
     case AddressingMode.accumulator:
@@ -164,21 +164,25 @@ Uint8List parseOperandValue(AddressingMode addressingMode, String? input) {
     case AddressingMode.zeropageY:
     case AddressingMode.indirectX:
     case AddressingMode.indirectY:
-      if (input == null) {
+      if (input.isEmpty()) {
         throw AssemblerError(
             'Addressing mode ${addressingMode.toString()} requires value but it was null ');
       }
-      return Uint8List.fromList([parse8BitHex(input)]);
+      return input.toBytes();
 
     case AddressingMode.absolute:
     case AddressingMode.absoluteX:
     case AddressingMode.absoluteY:
     case AddressingMode.indirect:
-      if (input == null) {
+      if (input.isEmpty()) {
         throw AssemblerError(
             'Addressing mode ${addressingMode.toString()} requires value but it was null ');
       }
-      return parse16BitHex(input);
+      var bytes = input.toBytes();
+      if (bytes.lengthInBytes < 2) {
+        throw AssemblerError('Expected 16 bit value but got 8 bit');
+      }
+      return input.toBytes();
 
     case AddressingMode.relative:
       throw AssemblerError('Relative addressing mode not yet implemented');

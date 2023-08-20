@@ -23,6 +23,7 @@ class Parser {
     for (final line in input.split('\n')) {
       var programLine = parseLine(lineNumber, line);
       block.lines.add(programLine);
+      lineNumber++;
     }
 
     return program;
@@ -149,7 +150,7 @@ class Parser {
     Instruction instructionObj = opcodeMap[opcode]!;
     Opcode opcodeObj;
     AddressingMode addressingMode;
-    String? operandValue;
+    OperandValue operandValue;
 
     if (operand != null) {
       final (parsedOpcodeObj, parsedOperandValue, parsedAddressingMode) =
@@ -167,7 +168,7 @@ class Parser {
             'No unique implicit opcode found for instruction: ${instructionObj.instruction}');
       }
       opcodeObj = opcodeObjs[0];
-      operandValue = null;
+      operandValue = EmptyOperandValue();
       addressingMode = AddressingMode.implied;
     }
 
@@ -234,8 +235,7 @@ class Parser {
     return input.startsWith('.') || opcodeMap.containsKey(input.toUpperCase());
   }
 
-  // return opcode and operand value as string
-  (Opcode, String, AddressingMode) extractOperands(
+  (Opcode, OperandValue, AddressingMode) extractOperands(
       Instruction instruction, String input) {
     final (addressingMode, operandValue) = parseOperands(input);
 
