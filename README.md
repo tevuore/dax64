@@ -1,5 +1,5 @@
 README
-------
+======
 
 WHAT: c64 is collection of tools compile & handle Commodore 64 machine code.
 
