@@ -89,7 +89,7 @@ void main() {
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
 
-    // TODO some thing is null
+    // TODO test something is null
     expect(line.comment, equals('some comment'));
   });
 
@@ -116,7 +116,7 @@ void main() {
   //   expect(elements[0].comment, equals('characters'));
   // });
 
-  // TODO
+  // TODO impl
   // test('should parse .BYTE', () async {
   //   final input = r'LABEL1  .BYTE $00    ; starting char';
   //

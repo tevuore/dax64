@@ -45,7 +45,8 @@ class AssemblyStatement extends Statement {
 class AssemblyInstruction extends AssemblyStatement {
   final Instruction instructionSpec;
   final Opcode opcode;
-  final Operand? operand; // TODO shouldn't every instruction have at least
+  final Operand?
+      operand; // TODO shouldn't every instruction have at least place for addressing mode?
 
   AssemblyInstruction({
     required this.instructionSpec,

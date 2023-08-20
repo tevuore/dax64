@@ -22,9 +22,6 @@ class Assembler {
 
     final bytes = <int>[];
 
-    // TODO make old behaviour working first
-    //  -> bytes = assembleOld(program);
-
     for (final block in program.blocks) {
       for (final line in block.lines) {
         try {
@@ -44,8 +41,7 @@ class Assembler {
                     instruction.operand!.addressingMode ==
                         AddressingMode.absolute) {
                   throw NotImplementedAssemblerError(
-                      'Relative addressing mode not implemented for instruction: ${instruction
-                          .instructionSpec.instruction}');
+                      'Relative addressing mode not implemented for instruction: ${instruction.instructionSpec.instruction}');
                 }
 
                 // TODO not nicest way to force non null
@@ -69,16 +65,15 @@ class Assembler {
               'Error on line ${line.lineNumber}: ${line.originalLine}. $e');
         }
         // TODO at first stage support just assembly statements
-        // TODO at 2nd phase data blocks
-        // TODO then macros
-        // TODO what about plain comment lines, are they already skipped
+        //  - at 2nd phase data blocks
+        //  - then macros
       }
     }
 
     // TODO final plan!!
-    // TODO: go through to find all assignments and labels (and later macros)
-    // TODO: then expand values and parse operands
-    // TODO: then assemble
+    //  1) go through to find all assignments and labels (and later macros)
+    //  2) then expand values and parse operands
+    //  3) then assemble
 
     return Uint8List.fromList(bytes);
   }

@@ -51,7 +51,7 @@ class Parser {
 
     // instruction line syntax
     // (label) opcode (operand) (comments)
-    // TODO label can bo on its own line and then it refers to following instruction
+    // TODO label can be on its own line and then it refers to following instruction
 
     // macro assembler statements
     // <name> = <value>

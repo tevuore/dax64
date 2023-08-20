@@ -48,7 +48,6 @@ void main() {
 
   // TODO fix
   // test('should format with Relative address mode', () {
-  //
   //   final opcode = buildOpcodeWithAddressMode('Relative');
   //   expect(outputWithAddressMode(opcode, Uint8List.fromList([0x06])), '\$0600');
   // });
