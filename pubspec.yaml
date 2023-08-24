@@ -1,14 +1,12 @@
 name: c64
-description: A sample command-line application.
-version: 1.0.0
+description: Set of tools to compile 6502 assembly code for the Commodore 64.
+version: 0.0.1
 # repository: https://github.com/my_org/my_repo
 
 environment:
-  sdk: ^3.0.4
+  sdk: ^3.0.0
 
-# Add regular dependencies here.
 dependencies:
-  # path: ^1.8.0
   args: ^2.4.2
   console: ^4.1.0
   quiver: ^3.2.1
