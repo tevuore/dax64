@@ -1,11 +1,11 @@
 import 'package:args/command_runner.dart';
-import 'package:c64/command/assemble_command.dart';
-import 'package:c64/command/basic_loader_command.dart';
-import 'package:c64/command/disassemble_command.dart';
-import 'package:c64/command/parse_basic_data_command.dart';
+import 'package:dax64/command/assemble_command.dart';
+import 'package:dax64/command/basic_loader_command.dart';
+import 'package:dax64/command/disassemble_command.dart';
+import 'package:dax64/command/parse_basic_data_command.dart';
 
 Future<int> main(List<String> args) async {
-  final runner = CommandRunner("c64", "Commodore 64 machine code utilities")
+  final runner = CommandRunner("dax64", "Commodore 64 machine code utilities")
     ..addCommand(ParseBasicDataCommand())
     ..addCommand(DisassembleCommand())
     ..addCommand(AssembleCommand())

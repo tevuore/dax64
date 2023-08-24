@@ -1,6 +1,6 @@
-import 'package:c64/basic/basic_loader.dart';
-import 'package:c64/command/command_base.dart';
-import 'package:c64/command/errors.dart';
+import 'package:dax64/basic/basic_loader.dart';
+import 'package:dax64/command/command_base.dart';
+import 'package:dax64/command/errors.dart';
 
 class BasicLoaderCommand extends CommandBase {
   @override

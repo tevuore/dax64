@@ -1,8 +1,8 @@
 // TODO could we have attribute that defines whether operand bytes should be expected?
 import 'dart:typed_data';
 
-import 'package:c64/assembler/errors.dart';
-import 'package:c64/models/asm_program.dart';
+import 'package:dax64/assembler/errors.dart';
+import 'package:dax64/models/asm_program.dart';
 
 enum AddressingMode {
   absolute,

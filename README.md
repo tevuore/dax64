@@ -1,14 +1,15 @@
 README
 ======
 
-WHAT: c64 is collection of tools compile & handle Commodore 64 machine code.
+WHAT: dax64 is collection of tools disassemble, assemble and support execution of Commodore 64
+machine code.
 
 STATUS: At the moment it is able to simple operations for 6502 machine code.
 
 GOAL: This project is a summer project for fun, relearning 6502 assembly and
 diving deeper into Dart programming.
 
-c64 can do
+dax64 can do
 
 * Extract machine code statements from DATA statements in BASIC programs
 * Disassemble machine code to 6502 assembly code
@@ -46,7 +47,7 @@ In addition you need ROM files.
 
 * TODO reference to instructions
 
-# Building c64
+# Building dax64
 
 First you need to generate model classes from json, run
 `dart run json_to_model .`
@@ -74,16 +75,16 @@ Example:
 $ TODO
 
 # Parse bytes from basic program
-$ dart run bin/c64.dart basicparser --input-file asm_program.bas --output-file program.bin
+$ dart run bin/dax64.dart basicparser --input-file asm_program.bas --output-file program.bin
 
 # Disassemble bytes
 $ TODO
 
 # Assemble machine code
-$ dart run bin/c64.dart assemble --input-file program.asm --output-file program.bin
+$ dart run bin/dax64.dart assemble --input-file program.asm --output-file program.bin
 
 # Create basic program to load machine code
-$ dart run bin/c64.dart basicloader --input-file program.bin --output-file asm_program.bas
+$ dart run bin/dax64.dart basicloader --input-file program.bin --output-file asm_program.bas
 
 # Detokenize 
 $ ./basicload.sh asm_program.bas

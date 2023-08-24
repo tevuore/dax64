@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:c64/models/generated/index.dart';
+import 'package:dax64/models/generated/index.dart';
 
 Future<Opcodes> readOpcodes() async {
   return readOpcodeJsonFile('assets/opcodes.json');

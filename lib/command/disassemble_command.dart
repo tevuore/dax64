@@ -1,8 +1,8 @@
-import 'package:c64/command/command_base.dart';
-import 'package:c64/command/errors.dart';
-import 'package:c64/disassembler/disassembler.dart';
-import 'package:c64/formatter/program_formatter.dart';
-import 'package:c64/opcodes_loader.dart';
+import 'package:dax64/command/command_base.dart';
+import 'package:dax64/command/errors.dart';
+import 'package:dax64/disassembler/disassembler.dart';
+import 'package:dax64/formatter/program_formatter.dart';
+import 'package:dax64/opcodes_loader.dart';
 
 class DisassembleCommand extends CommandBase {
   @override

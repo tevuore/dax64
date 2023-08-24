@@ -1,7 +1,7 @@
-import 'package:c64/assembler/addressing_modes.dart';
-import 'package:c64/assembler/errors.dart';
-import 'package:c64/models/asm_program.dart';
-import 'package:c64/models/generated/index.dart';
+import 'package:dax64/assembler/addressing_modes.dart';
+import 'package:dax64/assembler/errors.dart';
+import 'package:dax64/models/asm_program.dart';
+import 'package:dax64/models/generated/index.dart';
 
 class Parser {
   final Map<String, Instruction> opcodeMap = {};

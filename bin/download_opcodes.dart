@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-/// Purpose if this util is to format json containing 6502 opcodes to format
-/// that servers better c64 tools usage.
+/// Purpose of this util is to format json containing 6502 opcodes to format
+/// that servers better dax64 tools usage.
 ///
 void main(List<String> args) async {
   print('download');

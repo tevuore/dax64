@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:c64/basic/basic_loader.dart';
+import 'package:dax64/basic/basic_loader.dart';
 import 'package:test/test.dart';
 
 void main() {

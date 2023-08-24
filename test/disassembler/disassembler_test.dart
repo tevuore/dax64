@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:c64/disassembler/disassembler.dart';
-import 'package:c64/formatter/program_formatter.dart';
-import 'package:c64/models/generated/index.dart';
-import 'package:c64/opcodes_loader.dart';
+import 'package:dax64/disassembler/disassembler.dart';
+import 'package:dax64/formatter/program_formatter.dart';
+import 'package:dax64/models/generated/index.dart';
+import 'package:dax64/opcodes_loader.dart';
 import 'package:test/test.dart';
 
 void main() {

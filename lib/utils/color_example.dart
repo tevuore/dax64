@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:c64/models/generated/index.dart';
-import 'package:c64/utils/color_text.dart';
-import 'package:c64/utils/colors.dart';
 import 'package:console/console.dart';
+import 'package:dax64/models/generated/index.dart';
+import 'package:dax64/utils/color_text.dart';
+import 'package:dax64/utils/colors.dart';
 
 class CommitCommand extends Command {
   // The [name] and [description] properties must be defined by every
@@ -32,9 +32,7 @@ class CommitCommand extends Command {
     Colors.init();
     var colorText = ColorText();
     colorText.setBackgroundColor(7);
-    colorText
-        .gold('\n\n\ngold\n').print();
-
+    colorText.gold('\n\n\ngold\n').print();
 
     var pen = TextPen();
 
@@ -46,19 +44,16 @@ class CommitCommand extends Command {
 
     final op = await readOpcodeJsonFile('./data/opcodes.json');
 
-
     for (var instruction in op.instructions) {
       var colorText = ColorText();
       //colorText.setBackgroundColor(7);
-      colorText
-          .gold('\n${instruction.instruction} ');
+      colorText.gold('\n${instruction.instruction} ');
 
       for (var opcode in instruction.opcodes) {
         colorText.green('${opcode.opcode} ');
       }
       colorText.print();
     }
-
   }
 
   Future<Opcodes> readOpcodeJsonFile(String filePath) async {

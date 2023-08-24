@@ -1,4 +1,4 @@
-name: c64
+name: dax64
 description: Set of tools to compile 6502 assembly code for the Commodore 64.
 version: 0.0.1
 # repository: https://github.com/my_org/my_repo

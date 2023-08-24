@@ -1,9 +1,6 @@
-
-
-
 import 'dart:typed_data';
 
-import 'package:c64/models/generated/index.dart';
+import 'package:dax64/models/generated/index.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -12,17 +9,15 @@ class InstructionInstance {
   final Opcode opcode;
   final Uint8List paramBytes;
 
-  InstructionInstance({
-    required this.instruction,
-    required this.opcode,
-    required Uint8List instructionBytes}) : paramBytes = UnmodifiableUint8ListView(instructionBytes);
+  InstructionInstance(
+      {required this.instruction,
+      required this.opcode,
+      required Uint8List instructionBytes})
+      : paramBytes = UnmodifiableUint8ListView(instructionBytes);
 }
 
-class InstructionSet {
-
-}
+class InstructionSet {}
 
 class Program {
   final List<InstructionInstance> instructions = [];
 }
-

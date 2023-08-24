@@ -1,5 +1,5 @@
-import 'package:c64/assembler/addressing_modes.dart';
-import 'package:c64/formatter/hex_formatter.dart';
+import 'package:dax64/assembler/addressing_modes.dart';
+import 'package:dax64/formatter/hex_formatter.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -26,9 +26,7 @@ void main() {
     expect(mode, equals(AddressingMode.immediate));
     expect(value.getValue(), '05'); // TODO as raw value should we include $ ?
     expect(value.getIntValue(), equals(5));
-    expect(value
-        .toBytes()
-        .length, equals(1));
+    expect(value.toBytes().length, equals(1));
     expect(value.toBytes()[0], equals(5));
   });
 
@@ -39,9 +37,7 @@ void main() {
     expect(mode, equals(AddressingMode.absolute));
     expect(value.getValue(), '1234');
     expect(value.getIntValue(), equals(4660));
-    expect(value
-        .toBytes()
-        .length, equals(2));
+    expect(value.toBytes().length, equals(2));
     expect(HexFormatter.format(value.toBytes()), equals('34 12'));
   });
 

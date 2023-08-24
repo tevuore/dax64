@@ -1,9 +1,9 @@
-import 'package:c64/assembler/addressing_modes.dart';
-import 'package:c64/assembler/parser.dart';
-import 'package:c64/formatter/hex_formatter.dart';
-import 'package:c64/models/asm_program.dart';
-import 'package:c64/models/generated/index.dart';
-import 'package:c64/opcodes_loader.dart';
+import 'package:dax64/assembler/addressing_modes.dart';
+import 'package:dax64/assembler/parser.dart';
+import 'package:dax64/formatter/hex_formatter.dart';
+import 'package:dax64/models/asm_program.dart';
+import 'package:dax64/models/generated/index.dart';
+import 'package:dax64/opcodes_loader.dart';
 import 'package:test/test.dart';
 
 void main() {

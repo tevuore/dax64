@@ -1,8 +1,9 @@
 // part of utils;
 
-import 'package:c64/utils/colors.dart';
-import 'package:console/console.dart';
 import 'dart:io';
+
+import 'package:console/console.dart';
+import 'package:dax64/utils/colors.dart';
 
 class ColorText {
   Color? _currentTextColor;
@@ -37,8 +38,7 @@ class ColorText {
 
   Color? getTextColor() => _currentTextColor;
 
-  ColorText setBackgroundColor(int id,
-      {bool bright = false}) {
+  ColorText setBackgroundColor(int id, {bool bright = false}) {
     Color color;
     if (isXterm) {
       var c = id.clamp(0, 256);
