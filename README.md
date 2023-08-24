@@ -1,12 +1,12 @@
 README
 ======
 
-WHAT: dax64 is collection of tools disassemble, assemble and support execution of Commodore 64
+**WHAT**: dax64 is collection of tools disassemble, assemble and support execution of Commodore 64
 machine code.
 
-STATUS: At the moment it is able to simple operations for 6502 machine code.
+**STATUS**: At the moment it is able to simple operations for 6502 machine code.
 
-GOAL: This project is a summer project for fun, relearning 6502 assembly and
+**GOAL**: This project is a summer project for fun, relearning 6502 assembly and
 diving deeper into Dart programming.
 
 dax64 can do
@@ -23,6 +23,10 @@ Main limitations at the moment
 
 # Setup
 
+dax64 has been developed and tested on Ubuntu 22.04. As dart is cross platform language it should
+run on different platforms as well but setup of tools is different and not yet covered in this
+document.
+
 You need
 
 * Dart >= 3.0.0.
@@ -32,7 +36,7 @@ You need
 
 ## Install Dart
 
-Install Dart from https://dart.dev/get-dart****
+Install Dart from https://dart.dev/get-dart
 or use dvm.
 
 ## Install VICE
@@ -43,17 +47,23 @@ emulated Commodore 64.
 For Ubuntu based: sudo apt install vice.
 Other environments: https://vice-emu.sourceforge.io/index.html#download
 
-In addition you need ROM files.
-
-* TODO reference to instructions
+In addition you need ROM files as they are not included in Linux package.
+Read `/usr/share/doc/vice/README.ROMs` or similar location depending on your distribution.
 
 # Building dax64
+
+First you need to download dependencies with `dart pub get`.
+
+Then you need to download opcodes using `dart run bin/download_opcodes.dart`.
 
 First you need to generate model classes from json, run
 `dart run json_to_model .`
 
 The json_to_model uses flutter foundation package which is not available in plain Dart.
 Replace flutter foundation import with meta package in generated files.
+
+Finally if you prefer binary you can compile it `dart compile exe bin/dax64.dart` but using
+`dart run` works fine.
 
 # Running tests
 
@@ -72,31 +82,44 @@ Example:
 
 ```shell
 # Show help
-$ TODO
+$ dart run bin/dax64.dart --help
+# Help for specific command
+$ dart run bin/dax64.dart parsebasicdata -h
+
+# Create dir for outputs
+$ mkdir output
 
 # Parse bytes from basic program
-$ dart run bin/dax64.dart basicparser --input-file asm_program.bas --output-file program.bin
+$ dart run bin/dax64.dart parsebasicdata --input-file programs/program.bas --output-file output/program.bin
 
 # Disassemble bytes
-$ TODO
+$ dart run bin/dax64.dart disassemble --input-file output/program.bin --output-file output/program.asm --add-instruction-description
 
 # Assemble machine code
-$ dart run bin/dax64.dart assemble --input-file program.asm --output-file program.bin
+$ dart run bin/dax64.dart assemble --input-file output/program.asm --output-file output/program.bin
 
 # Create basic program to load machine code
-$ dart run bin/dax64.dart basicloader --input-file program.bin --output-file asm_program.bas
+$ dart run bin/dax64.dart basicloader --input-file output/program.bin --output-file output/program_2.bas
 
-# Detokenize 
-$ ./basicload.sh asm_program.bas
+# Detokenize to prepare running in emulator, generate *.prg file
+$ ./basicload.sh output/program_2.bas
 
-# Run with VICE
-$ x64 -basicload asm_program.bas.prg
+# Run with VICE: Should print range of characters
+$ x64 -basicload output/program_2.bas.prg
 
 ```
 
-There is `run.sh` script which does all the steps above.
+There is `run.sh` script which combines assembling, basic loader and execution.
+`./run.sh output/program.asm`
 
-## Byte handling in Dart
+## Implementation Details
+
+### 6502 Opcodes
+
+Opcodes are not hard coded in the code. Instead they are read from json file which is converted from
+https://raw.githubusercontent.com/ericTheEchidna/65C02-JSON/main/opcodes_65c02.json.
+
+### Byte handling in Dart
 
 Dart doesn't support 8-bit byte as data type. Instead they need to be handled
 as integers. There Uint8List which provides efficient way to store bytes, as it
