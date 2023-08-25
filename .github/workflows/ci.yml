@@ -21,5 +21,6 @@ jobs:
       - run: dart analyze
       - run: dart test
 
+      - run: sudo apt install vice
       - run: ./test_execution_flow.sh
               
