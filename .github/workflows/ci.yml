@@ -20,4 +20,7 @@ jobs:
       - run: dart format --output=none --set-exit-if-changed .
       - run: dart analyze
       - run: dart test
-      
+
+      - run: sudo apt install vice
+      - run: ./test_execution_flow.sh
+              
