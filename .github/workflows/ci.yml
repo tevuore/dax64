@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [master, develop]
+  push:
+    brances: [master, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.0.5
+
+      - run: dart pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: dart analyze
+      - run: dart test
+      
