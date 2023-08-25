@@ -54,14 +54,6 @@ Read `/usr/share/doc/vice/README.ROMs` or similar location depending on your dis
 
 First you need to download dependencies with `dart pub get`.
 
-Then you need to download opcodes using `dart run bin/download_opcodes.dart`.
-
-First you need to generate model classes from json, run
-`dart run json_to_model .`
-
-The json_to_model uses flutter foundation package which is not available in plain Dart.
-Replace flutter foundation import with meta package in generated files.
-
 Finally if you prefer binary you can compile it `dart compile exe bin/dax64.dart` but using
 `dart run` works fine.
 
@@ -117,7 +109,16 @@ There is `run.sh` script which combines assembling, basic loader and execution.
 ### 6502 Opcodes
 
 Opcodes are not hard coded in the code. Instead they are read from json file which is converted from
-https://raw.githubusercontent.com/ericTheEchidna/65C02-JSON/main/opcodes_65c02.json.
+https://raw.githubusercontent.com/ericTheEchidna/65C02-JSON/main/opcodes_65c02.json to format better suited for dax64.
+
+Opcodes are preloaded but they can be redownloaded by running  `dart run bin/download_opcodes.dart`.
+
+Then you need to generate model classes from json, run
+`dart run json_to_model -o lib/models/generated`.
+
+The json_to_model uses flutter foundation package which is not available in plain Dart.
+Replace flutter foundation import with meta package in generated files.
+ * `import 'package:flutter/foundation.dart';` -> `import 'package:meta/meta.dart';`
 
 ### Byte handling in Dart
 

@@ -1,4 +1,8 @@
 import 'package:meta/meta.dart';
+import 'package:quiver/core.dart';
+
+
+import 'index.dart';
 
 @immutable
 class Opcodes {
@@ -168,55 +172,55 @@ class Flags {
 class Opcode {
 
   const Opcode({
-    required this.opcode,
     required this.addressMode,
     required this.bytes,
     required this.cycles,
+    required this.opcode,
   });
 
-  final String opcode;
   final String addressMode;
   final String bytes;
   final String cycles;
+  final String opcode;
 
   factory Opcode.fromJson(Map<String,dynamic> json) => Opcode(
-    opcode: json['opcode'].toString(),
     addressMode: json['address_mode'].toString(),
     bytes: json['bytes'].toString(),
-    cycles: json['cycles'].toString()
+    cycles: json['cycles'].toString(),
+    opcode: json['opcode'].toString()
   );
   
   Map<String, dynamic> toJson() => {
-    'opcode': opcode,
     'address_mode': addressMode,
     'bytes': bytes,
-    'cycles': cycles
+    'cycles': cycles,
+    'opcode': opcode
   };
 
   Opcode clone() => Opcode(
-    opcode: opcode,
     addressMode: addressMode,
     bytes: bytes,
-    cycles: cycles
+    cycles: cycles,
+    opcode: opcode
   );
 
 
   Opcode copyWith({
-    String? opcode,
     String? addressMode,
     String? bytes,
-    String? cycles
+    String? cycles,
+    String? opcode
   }) => Opcode(
-    opcode: opcode ?? this.opcode,
     addressMode: addressMode ?? this.addressMode,
     bytes: bytes ?? this.bytes,
     cycles: cycles ?? this.cycles,
+    opcode: opcode ?? this.opcode,
   );
 
   @override
   bool operator ==(Object other) => identical(this, other)
-    || other is Opcode && opcode == other.opcode && addressMode == other.addressMode && bytes == other.bytes && cycles == other.cycles;
+    || other is Opcode && addressMode == other.addressMode && bytes == other.bytes && cycles == other.cycles && opcode == other.opcode;
 
   @override
-  int get hashCode => opcode.hashCode ^ addressMode.hashCode ^ bytes.hashCode ^ cycles.hashCode;
+  int get hashCode => addressMode.hashCode ^ bytes.hashCode ^ cycles.hashCode ^ opcode.hashCode;
 }
