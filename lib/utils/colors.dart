@@ -6,7 +6,6 @@ import 'package:console/console.dart';
 import 'dart:io';
 
 abstract class Colors {
-
   static late bool _isXterm;
   static bool _isInitialized = false;
 
@@ -25,7 +24,7 @@ abstract class Colors {
   static Color get BLACK {
     if (!_isInitialized) init();
     return Color(0, xterm: _isXterm);
-  } 
+  }
 
   static Color get GRAY {
     if (!_isInitialized) init();
@@ -80,7 +79,7 @@ abstract class Colors {
   static Color get MAGENTA {
     if (!_isInitialized) init();
     return Color(5, xterm: _isXterm);
-  } 
+  }
 
   static Color get LIGHT_CYAN {
     if (!_isInitialized) init();

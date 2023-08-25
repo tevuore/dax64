@@ -1,4 +1,3 @@
-
 import 'dart:typed_data';
 
 Uint8List parse(String input) {
@@ -13,7 +12,9 @@ Uint8List parse(String input) {
     line = line.trim();
 
     // Check if the line starts with a number followed by a space
-    if (line.isNotEmpty && line.contains(' ') && int.tryParse(line[0]) != null) {
+    if (line.isNotEmpty &&
+        line.contains(' ') &&
+        int.tryParse(line[0]) != null) {
       // Split the line by space
       List<String> lineParts = line.split(' ');
 
