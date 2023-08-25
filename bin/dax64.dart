@@ -17,8 +17,11 @@ Future<void> main(List<String> args) async {
   try {
     final result = await runner.run(args);
 
-    if (result is int) exit(result);
-    exitCode = 0;
+    if (result is int) {
+      exitCode = result;
+    } else {
+      exitCode = 0;
+    }
   } catch (e, stacktrace) {
     // TODO with verbose flag print stacktrace
     print(e);
