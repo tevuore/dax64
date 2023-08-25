@@ -117,9 +117,10 @@ Then you need to generate model classes from json, run
 `dart run json_to_model -o lib/models/generated`.
 
 The json_to_model uses flutter foundation package which is not available in plain Dart.
-Replace flutter foundation import with meta package in generated files.
+Replace flutter foundation import with meta package in generated files under `lib/models/generated`.
  * `import 'package:flutter/foundation.dart';` -> `import 'package:meta/meta.dart';`
 
+Finally run `dart format lib/models/generated`
 ### Byte handling in Dart
 
 Dart doesn't support 8-bit byte as data type. Instead they need to be handled
