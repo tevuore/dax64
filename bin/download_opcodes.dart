@@ -8,10 +8,10 @@ import 'package:http/http.dart' as http;
 ///
 void main(List<String> args) async {
   print('download');
-
+  final tmpOpcodesFile = 'opcodes_org.json';
   final url =
       'https://raw.githubusercontent.com/ericTheEchidna/65C02-JSON/main/opcodes_65c02.json';
-  final downloadedFile = await _downloadFile(url, 'opcodes_org.json');
+  final downloadedFile = await _downloadFile(url, tmpOpcodesFile);
 
   final json = await _readOpcodesJsonFile(downloadedFile.path);
 
@@ -36,7 +36,9 @@ void main(List<String> args) async {
     });
   }
 
-  await _saveOpcodesJsonFile(finalJson, 'opcodes.json');
+  await _saveOpcodesJsonFile(finalJson, 'jsons/opcodes.json');
+  File file = File('opcodes_org.json');
+  await file.delete();
 }
 
 Future<File> _downloadFile(String url, String filename) async {
