@@ -26,6 +26,7 @@ class Assembler {
       for (final line in block.lines) {
         try {
           if (line.statement is AssemblyInstruction) {
+            // TeroV this could be done in functional way
             final instruction = line.statement as AssemblyInstruction;
 
             if (instruction.shouldAssemble) {
@@ -33,7 +34,7 @@ class Assembler {
                 bytes.add(parse8BitHex(instruction.opcode.opcode));
 
                 // operand value is string - it could be label or macro ref, but
-                // that is not yet implemented
+                // that is not yet implemented for assembling output
 
                 // TODO why opcode has addressing mode as string? could it have as enum?
                 // special case for relative addressing mode

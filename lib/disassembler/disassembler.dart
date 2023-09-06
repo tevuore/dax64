@@ -45,6 +45,7 @@ class Disassembler {
       for (var j = 0; j < numberOfParamBytes; j++) {
         operands.add(bytes[i + j + 1]);
       }
+      // TODO this used old style of constructing program, refactor to new style
       program.instructions.add(InstructionInstance(
           instruction: instruction,
           opcode: opcodeObj,

@@ -57,13 +57,14 @@ class Parser {
     // <name> = <value>
     // (label) .datatype <value>(,<value>)
 
+    // TeroV refactor this to separate function
     String? label;
     String? opcode;
     String? operand;
     String? comment;
 
-    // take all after comment char (note that we require always ; for comments
-    // and ; is reserved for comments only
+    // take away all after comment char. Note that we require always ; for
+    // comments and ; is reserved for comments only
     var indexOfSemiComma = line.indexOf(';');
     if (indexOfSemiComma > 0) {
       comment = line.substring(indexOfSemiComma + 1).trim();
@@ -72,6 +73,8 @@ class Parser {
 
     // is it data declaration? With or without label
     // TODO improve regex to work properly with label+whitespace
+
+    // TeroV: what does this regex really match? I don't understand it. Looks like data declaration? Give example of input
     regex = RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*\.([a-zA-Z]+)[ ]+(.*)$');
     var m = regex.firstMatch(line);
     if (m != null) {
@@ -91,7 +94,8 @@ class Parser {
     }
 
     // macro assignment statement?
-
+    //
+    // example: my_const = 0xaf
     regex = RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]+)[ \t]?=[ \t]?(.+)$');
     m = regex.firstMatch(line);
     if (m != null) {
@@ -104,33 +108,42 @@ class Parser {
           statement: MacroAssignment(name: valueName!, value: value!));
     }
 
-    // so it is instruction line
+    // so it is instruction line, but what kind of?
 
-    // there will 1-4 parts (see syntax shown previously)
-    // either 1st or 2nd part is opcode or asm statement
+    // there will 1-4 parts (syntax: (label) opcode (operand) (comments))
+    // either 1st or 2nd part is opcode or asm statement. Unfortunately there
+    // is no character that clearly separates label and opcode.
+
     final parts = splitInstructionLine(line);
-    assert(parts.length < 4);
+    assert(parts.length <
+        4); // TeroV is this really true? If all syntax parts exists => create a test case
 
+    // no label and first part is opcode
     if (isOpcode(parts[0])) {
       if (parts.length > 2) {
+        // TeroV might here is same thing?
         throw AssemblerError(
             'Failed to parse line as too many parts after opcode: $unmodifiedLine');
       }
       opcode = parts[0];
       operand = parts.length == 2 ? parts[1] : null;
       comment = parts.length == 3 ? parts[2] : comment;
+
+      // first part is label and second part is opcode
     } else if (parts.length > 1 && isOpcode(parts[1])) {
       label = parts[0];
       opcode = parts[1];
       operand = parts.length == 3 ? parts[2] : null;
       comment = parts.length == 4 ? parts[3] : comment;
+
+      // only label
     } else {
       // [0] could be label, and there is no opcode
       if (parts.length > 1) {
         throw AssemblerError(
             'Failed to parse line as no opcode found and there is input after label: $unmodifiedLine');
       }
-      label = parts[0];
+      label = parts[0]; // TeroV verify what is created based on this
     }
 
     // TODO there are other places where label is parsed, same validation everywhere!
@@ -143,6 +156,7 @@ class Parser {
           statement: AssemblyStatement(label: label));
     }
 
+    // used case in opcode needs to match to register opcodes
     if (!opcodeMap.containsKey(opcode)) {
       throw AssemblerError('Unknown instruction: $opcode');
     }
