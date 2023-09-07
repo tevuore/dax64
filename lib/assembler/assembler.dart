@@ -20,8 +20,6 @@ class Assembler {
   Uint8List assemble(String input) {
     final program = Parser(opcodes: opcodes).parse(input);
 
-    final bytes = <int>[];
-
     // we need to go through program twice
     //  - 1st round to find all labels and macro statement (TODO impl)
     //  - 2nd round to expand lab
@@ -36,7 +34,24 @@ class Assembler {
     //  2) then expand values and parse operands
     //  3) then assemble
 
-    // 2nd round
+    // TODO how macro invocations is recognized and when it is expanded?
+
+
+    // label points to line number because a label may me located on its own
+    // line, and refers to next instructions line, or it maybe combined to
+    // same line with instruction
+    final labels = firstRoundCollectData(program);
+
+    final bytes = secondRoundAssemble(program, labels);
+
+    return Uint8List.fromList(bytes);
+  }
+
+  List<int> secondRoundAssemble(AsmProgram program,
+      Map<String, AsmProgramLine> labels) {
+    // TODO impl using labels
+
+    final bytes = <int>[];
     for (final block in program.blocks) {
       for (final line in block.lines) {
         try {
@@ -50,7 +65,7 @@ class Assembler {
               throw UnimplementedError('Macro statements not yet implemented');
 
             case final EmptyStatement _:
-              // empty statements do not generate any assembly output
+            // empty statements do not generate any assembly output
               continue;
           }
         } catch (e, stacktrace) {
@@ -64,7 +79,48 @@ class Assembler {
       }
     }
 
-    return Uint8List.fromList(bytes);
+    return bytes;
+  }
+
+  // collects labels
+  // TODO add value object
+  Map<String, AsmProgramLine> firstRoundCollectData(AsmProgram program) {
+    final labels = <String, AsmProgramLine>{};
+
+    for (final block in program.blocks) {
+      for (final line in block.lines) {
+        try {
+          switch (line.statement) {
+            case final AssemblyStatement statement:
+              if (statement.label != null) {
+                labels[statement.label!] = line;
+              }
+              break;
+
+            case final MacroStatement _:
+            // TODO collect macros and macro assignments
+              throw UnimplementedError('Macro statements not yet implemented');
+
+            case final EmptyStatement _:
+            // empty statements do not contain labels, label is part of
+            // AssemblyStatement
+            // TODO: which above is a bit funny as line with just a label is
+            // not generated to any assembly output... label should actually
+            // be part of next statement...
+              continue;
+          }
+        } catch (e, stacktrace) {
+          // TODO with verbose flag print stacktrace
+          print(e);
+          print(stacktrace);
+
+          throw AssemblerError(
+              'Error on line ${line.lineNumber}: ${line.originalLine}. $e');
+        }
+      }
+    }
+
+    return labels;
   }
 
   List<int> assembleAssemblyStatement(AssemblyStatement statement) {
@@ -85,7 +141,8 @@ class Assembler {
           if (isRelativeJumpInstruction(statement.instructionSpec) &&
               statement.operand!.addressingMode == AddressingMode.absolute) {
             throw NotImplementedAssemblerError(
-                'Relative addressing mode not implemented for instruction: ${statement.instructionSpec.instruction}');
+                'Relative addressing mode not implemented for instruction: ${statement
+                    .instructionSpec.instruction}');
           }
 
           // TODO not nicest way to force non null
