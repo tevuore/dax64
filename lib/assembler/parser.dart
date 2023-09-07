@@ -34,7 +34,7 @@ class Parser {
 
     // skip empty lines
     if (line.isEmpty) {
-      return AsmProgramLine(
+      return AsmProgramLine.withoutStatement(
           lineNumber: lineNumber, originalLine: unmodifiedLine);
     }
 
@@ -43,7 +43,7 @@ class Parser {
     var match = regex.firstMatch(line);
     if (match != null) {
       var comment = match.group(1);
-      return AsmProgramLine(
+      return AsmProgramLine.withoutStatement(
           lineNumber: lineNumber,
           originalLine: unmodifiedLine,
           comment: comment!.trim());

@@ -19,17 +19,27 @@ class AsmProgramLine {
   final int lineNumber;
   final String originalLine;
   final String? comment;
-  final Statement? statement;
+  final Statement statement;
 
   AsmProgramLine(
       {required this.lineNumber,
       required this.originalLine,
-      this.statement,
+      required this.statement,
       this.comment});
+
+  AsmProgramLine.withoutStatement(
+      {required this.lineNumber, required this.originalLine, this.comment})
+      : statement = EmptyStatement();
 }
 
-abstract class Statement {
+sealed class Statement {
   bool get shouldAssemble;
+}
+
+/// Models empty or plain comment line in assembly source code
+class EmptyStatement extends Statement {
+  @override
+  final shouldAssemble = false;
 }
 
 class AssemblyStatement extends Statement {
@@ -72,21 +82,20 @@ class AssemblyData extends AssemblyStatement {
         );
 }
 
-class MacroInstruction extends Statement {
+abstract class MacroStatement extends Statement {
   @override
   final shouldAssemble = false;
+}
 
+class MacroInstruction extends MacroStatement {
 // TODO macro definition
 
   MacroInstruction({int? location});
 }
 
-class MacroAssignment extends Statement {
+class MacroAssignment extends MacroStatement {
   final String name;
   final String value; // TODO how to support different value types
-
-  @override
-  final shouldAssemble = false;
 
   MacroAssignment({
     required this.name,
