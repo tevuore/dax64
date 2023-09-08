@@ -36,7 +36,6 @@ class Assembler {
 
     // TODO how macro invocations is recognized and when it is expanded?
 
-
     // label points to line number because a label may me located on its own
     // line, and refers to next instructions line, or it maybe combined to
     // same line with instruction
@@ -45,41 +44,6 @@ class Assembler {
     final bytes = secondRoundAssemble(program, labels);
 
     return Uint8List.fromList(bytes);
-  }
-
-  List<int> secondRoundAssemble(AsmProgram program,
-      Map<String, AsmProgramLine> labels) {
-    // TODO impl using labels
-
-    final bytes = <int>[];
-    for (final block in program.blocks) {
-      for (final line in block.lines) {
-        try {
-          switch (line.statement) {
-            case final AssemblyStatement statement:
-              var statementBytes = assembleAssemblyStatement(statement);
-              bytes.addAll(statementBytes);
-              break;
-
-            case final MacroStatement _:
-              throw UnimplementedError('Macro statements not yet implemented');
-
-            case final EmptyStatement _:
-            // empty statements do not generate any assembly output
-              continue;
-          }
-        } catch (e, stacktrace) {
-          // TODO with verbose flag print stacktrace
-          print(e);
-          print(stacktrace);
-
-          throw AssemblerError(
-              'Error on line ${line.lineNumber}: ${line.originalLine}. $e');
-        }
-      }
-    }
-
-    return bytes;
   }
 
   // collects labels
@@ -98,15 +62,15 @@ class Assembler {
               break;
 
             case final MacroStatement _:
-            // TODO collect macros and macro assignments
+              // TODO collect macros and macro assignments
               throw UnimplementedError('Macro statements not yet implemented');
 
             case final EmptyStatement _:
-            // empty statements do not contain labels, label is part of
-            // AssemblyStatement
-            // TODO: which above is a bit funny as line with just a label is
-            // not generated to any assembly output... label should actually
-            // be part of next statement...
+              // empty statements do not contain labels, label is part of
+              // AssemblyStatement
+              // TODO: which above is a bit funny as line with just a label is
+              // not generated to any assembly output... label should actually
+              // be part of next statement...
               continue;
           }
         } catch (e, stacktrace) {
@@ -123,38 +87,82 @@ class Assembler {
     return labels;
   }
 
-  List<int> assembleAssemblyStatement(AssemblyStatement statement) {
+  List<int> secondRoundAssemble(
+      AsmProgram program, Map<String, AsmProgramLine> labels) {
+    // TODO impl using labels
+
     final bytes = <int>[];
-    // TeroV functional way
-    if (statement is AssemblyInstruction) {
-      // TeroV this could be done in functional way
+    for (final block in program.blocks) {
+      for (final line in block.lines) {
+        try {
+          switch (line.statement) {
+            case final AssemblyStatement statement:
+              var statementBytes = assembleAssemblyStatement(statement);
+              bytes.addAll(statementBytes);
+              break;
 
-      if (statement.shouldAssemble) {
-        if (statement.operand != null) {
-          bytes.add(parse8BitHex(statement.opcode.opcode));
+            case final MacroStatement _:
+              throw UnimplementedError('Macro statements not yet implemented');
 
-          // operand value is string - it could be label or macro ref, but
-          // that is not yet implemented for assembling output
-
-          // TODO why opcode has addressing mode as string? could it have as enum?
-          // special case for relative addressing mode
-          if (isRelativeJumpInstruction(statement.instructionSpec) &&
-              statement.operand!.addressingMode == AddressingMode.absolute) {
-            throw NotImplementedAssemblerError(
-                'Relative addressing mode not implemented for instruction: ${statement
-                    .instructionSpec.instruction}');
+            case final EmptyStatement _:
+              // empty statements do not generate any assembly output
+              continue;
           }
+        } catch (e, stacktrace) {
+          // TODO with verbose flag print stacktrace
+          print(e);
+          print(stacktrace);
 
-          // TODO not nicest way to force non null
-          final operandBytes = parseOperandValue(
-              statement.operand!.addressingMode, statement.operand!.value);
-          bytes.addAll(operandBytes);
-        } else {
-          // no operands
-          // TODO is the naming BEST
-          bytes.add(parse8BitHex(statement.opcode.opcode));
+          throw AssemblerError(
+              'Error on line ${line.lineNumber}: ${line.originalLine}. $e');
         }
       }
+    }
+
+    return bytes;
+  }
+
+  List<int> assembleAssemblyStatement(AssemblyStatement statement) {
+    if (!statement.shouldAssemble) return [];
+    final bytes = <int>[];
+
+    switch (statement) {
+      case AssemblyInstruction(
+          :var opcode,
+          :var instructionSpec,
+          :var operand?
+        ):
+        bytes.add(parse8BitHex(opcode.opcode));
+
+        // operand value is string - it could be label or macro ref, but
+        // that is not yet implemented for assembling output
+
+        // TODO why opcode has addressing mode as string? could it have as enum?
+        // special case for relative addressing mode
+        if (isRelativeJumpInstruction(instructionSpec) &&
+            operand.addressingMode == AddressingMode.absolute) {
+          throw NotImplementedAssemblerError(
+              'Relative addressing mode not implemented for instruction: ${instructionSpec.instruction}');
+        }
+
+        final operandBytes =
+            parseOperandValue(operand.addressingMode, operand.value);
+
+        bytes.addAll(operandBytes);
+
+        break;
+
+      case AssemblyInstruction(:var opcode):
+        // no operands
+        // TODO "opcode"*2 is not the naming BEST
+        bytes.add(parse8BitHex(opcode.opcode));
+        break;
+
+      case final AssemblyData _:
+        break;
+
+      default:
+        break;
     }
 
     return bytes;

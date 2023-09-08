@@ -42,7 +42,7 @@ class EmptyStatement extends Statement {
   final shouldAssemble = false;
 }
 
-class AssemblyStatement extends Statement {
+sealed class AssemblyStatement extends Statement {
   final String? label;
   int? memoryAddress; // TODO should be only in machine instructions
 
