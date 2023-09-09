@@ -34,13 +34,24 @@ void main() {
         0x60
       ];
 
+      final expected = r'''A0 00    LDY #$00; Load Y
+98       TYA   ; Transfer Y to Accumulator
+99 00 04 STA $0400,y; Store Accumulator
+A9 03    LDA #$03; Load Accumulator
+99 00 D8 STA $d800,y; Store Accumulator
+C8       INY   ; Increment Y by one
+D0 F4    BNE #$f4; Branch if Result Not Zero
+60       RTS   ; Return from Subroutine
+''';
+
       Uint8List bytes = Uint8List.fromList(input);
 
       final program = disassembler.disassemble(bytes);
 
       final output = ProgramFormatter.format(program,
           addInstructionDescription: true, addBytes: true);
-      print(output);
+
+      expect(output, equals(expected));
     });
 
     test('should disassemble input with short hex syntax', () async {
