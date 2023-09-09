@@ -153,7 +153,9 @@ class Parser {
       return AsmProgramLine(
           lineNumber: lineNumber,
           originalLine: unmodifiedLine,
-          statement: AssemblyStatement(label: label));
+          statement: label != null
+              ? LabelStatement(label: label)
+              : EmptyStatement.empty());
     }
 
     // used case in opcode needs to match to register opcodes

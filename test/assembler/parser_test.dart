@@ -37,7 +37,7 @@ void main() {
     final line = takeSingleLineFromSingleBlock(program);
     final instruction = toAssemblyInstruction(line);
 
-    expect(instruction.label, isNull);
+    expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('LDY'));
     expect(HexFormatter.format(instruction.operand!.value.toBytes()),
         equals('00'));
@@ -51,7 +51,7 @@ void main() {
     final line = takeSingleLineFromSingleBlock(program);
     final instruction = toAssemblyInstruction(line);
 
-    expect(instruction.label, isNull);
+    expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('RTS'));
     expect(instruction.operand!.value.isEmpty(), true);
     expect(instruction.operand!.addressingMode, equals(AddressingMode.implied));

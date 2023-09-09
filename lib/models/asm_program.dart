@@ -29,27 +29,48 @@ class AsmProgramLine {
 
   AsmProgramLine.withoutStatement(
       {required this.lineNumber, required this.originalLine, this.comment})
-      : statement = EmptyStatement();
+      : statement = EmptyStatement.empty();
 }
 
 sealed class Statement {
-  bool get shouldAssemble;
+  final bool shouldAssemble;
+  late final String? _label;
+
+  // TODO should we have own type for label that prevents empty values
+  Statement({required this.shouldAssemble, String? label}) {
+    if (label != null && label.trim().isEmpty) {
+      throw InternalAssemblerError('Label should not be blank');
+    }
+    _label = label;
+  }
+
+  String get label {
+    if (_label == null) {
+      throw AssemblerError('Statement has no label');
+    }
+    return _label!;
+  }
+
+  bool hasLabel() => _label != null;
 }
 
 /// Models empty or plain comment line in assembly source code
 class EmptyStatement extends Statement {
+  EmptyStatement.empty() : super(shouldAssemble: false);
+}
+
+/// Only label on line
+class LabelStatement extends Statement {
   @override
-  final shouldAssemble = false;
+  LabelStatement({required String label})
+      : super(shouldAssemble: false, label: label);
 }
 
 sealed class AssemblyStatement extends Statement {
-  final String? label;
   int? memoryAddress; // TODO should be only in machine instructions
 
-  @override
-  final shouldAssemble = true;
-
-  AssemblyStatement({this.label, this.memoryAddress});
+  AssemblyStatement({this.memoryAddress, String? label})
+      : super(shouldAssemble: true, label: label);
 }
 
 class AssemblyInstruction extends AssemblyStatement {
@@ -82,15 +103,16 @@ class AssemblyData extends AssemblyStatement {
         );
 }
 
-abstract class MacroStatement extends Statement {
-  @override
-  final shouldAssemble = false;
+sealed class MacroStatement extends Statement {
+  MacroStatement({String? label}) : super(shouldAssemble: false, label: label);
 }
 
-class MacroInstruction extends MacroStatement {
-// TODO macro definition
+class MacroDefinition extends MacroStatement {
+  // TODO impl
+}
 
-  MacroInstruction({int? location});
+class MacroInvocation extends MacroStatement {
+// TODO impl
 }
 
 class MacroAssignment extends MacroStatement {
@@ -100,7 +122,6 @@ class MacroAssignment extends MacroStatement {
   MacroAssignment({
     required this.name,
     required this.value,
-    int? location,
   });
 }
 

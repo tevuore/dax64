@@ -56,14 +56,18 @@ class Assembler {
         try {
           switch (line.statement) {
             case final AssemblyStatement statement:
-              if (statement.label != null) {
-                labels[statement.label!] = line;
+              if (statement.hasLabel()) {
+                labels[statement.label] = line;
               }
               break;
 
             case final MacroStatement _:
               // TODO collect macros and macro assignments
               throw UnimplementedError('Macro statements not yet implemented');
+
+            case final LabelStatement statement:
+              labels[statement.label] = line;
+              break;
 
             case final EmptyStatement _:
               // empty statements do not contain labels, label is part of
@@ -104,6 +108,8 @@ class Assembler {
             case final MacroStatement _:
               throw UnimplementedError('Macro statements not yet implemented');
 
+            // plain labels do not generate any assembly output
+            case final LabelStatement _:
             case final EmptyStatement _:
               // empty statements do not generate any assembly output
               continue;
