@@ -19,27 +19,58 @@ class AsmProgramLine {
   final int lineNumber;
   final String originalLine;
   final String? comment;
-  final Statement? statement;
+  final Statement statement;
 
   AsmProgramLine(
       {required this.lineNumber,
       required this.originalLine,
-      this.statement,
+      required this.statement,
       this.comment});
+
+  AsmProgramLine.withoutStatement(
+      {required this.lineNumber, required this.originalLine, this.comment})
+      : statement = EmptyStatement.empty();
 }
 
-abstract class Statement {
-  bool get shouldAssemble;
+sealed class Statement {
+  final bool shouldAssemble;
+  late final String? _label;
+
+  // TODO should we have own type for label that prevents empty values
+  Statement({required this.shouldAssemble, String? label}) {
+    if (label != null && label.trim().isEmpty) {
+      throw InternalAssemblerError('Label should not be blank');
+    }
+    _label = label;
+  }
+
+  String get label {
+    if (_label == null) {
+      throw AssemblerError('Statement has no label');
+    }
+    return _label!;
+  }
+
+  bool hasLabel() => _label != null;
 }
 
-class AssemblyStatement extends Statement {
-  final String? label;
+/// Models empty or plain comment line in assembly source code
+class EmptyStatement extends Statement {
+  EmptyStatement.empty() : super(shouldAssemble: false);
+}
+
+/// Only label on line
+class LabelStatement extends Statement {
+  @override
+  LabelStatement({required String label})
+      : super(shouldAssemble: false, label: label);
+}
+
+sealed class AssemblyStatement extends Statement {
   int? memoryAddress; // TODO should be only in machine instructions
 
-  @override
-  final shouldAssemble = true;
-
-  AssemblyStatement({this.label, this.memoryAddress});
+  AssemblyStatement({this.memoryAddress, String? label})
+      : super(shouldAssemble: true, label: label);
 }
 
 class AssemblyInstruction extends AssemblyStatement {
@@ -72,26 +103,25 @@ class AssemblyData extends AssemblyStatement {
         );
 }
 
-class MacroInstruction extends Statement {
-  @override
-  final shouldAssemble = false;
-
-// TODO macro definition
-
-  MacroInstruction({int? location});
+sealed class MacroStatement extends Statement {
+  MacroStatement({String? label}) : super(shouldAssemble: false, label: label);
 }
 
-class MacroAssignment extends Statement {
+class MacroDefinition extends MacroStatement {
+  // TODO impl
+}
+
+class MacroInvocation extends MacroStatement {
+// TODO impl
+}
+
+class MacroAssignment extends MacroStatement {
   final String name;
   final String value; // TODO how to support different value types
-
-  @override
-  final shouldAssemble = false;
 
   MacroAssignment({
     required this.name,
     required this.value,
-    int? location,
   });
 }
 

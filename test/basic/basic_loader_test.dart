@@ -26,10 +26,19 @@ void main() {
         0x60
       ];
 
+      final expected = '''10 REM *** LOADER ***
+20 FOR I=0 TO 14
+30 READ A
+40 POKE 49152+I,A
+50 NEXT I
+60 SYS 49152
+70 DATA 160,0,152,153,0,4,169,3,153,0,216,200,208,244,96
+''';
+
       Uint8List bytes = Uint8List.fromList(input);
 
       final output = loader.wrap(bytes);
-      print(output);
+      expect(output, equals(expected));
     });
   });
 }

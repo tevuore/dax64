@@ -17,3 +17,13 @@ class NotImplementedAssemblerError extends AssemblerError {
     return 'NotImplementedAssemblerError: $message';
   }
 }
+
+// internal errors shouldn't happen, they are like assert errors but
+class InternalAssemblerError extends AssemblerError {
+  InternalAssemblerError(super.message);
+
+  @override
+  String toString() {
+    return 'InternalAssemblerError: $message';
+  }
+}

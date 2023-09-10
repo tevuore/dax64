@@ -27,7 +27,6 @@ void main() {
     final bytes = assembler.assemble(input);
 
     final output = HexFormatter.format(bytes);
-    print(output);
     expect(output, equals('A0 00 98 99 00 04 A9 03 99 00 D8 C8 D0 F4 60'));
   });
 
@@ -36,7 +35,6 @@ void main() {
     final bytes = assembler.assemble(input);
 
     final output = HexFormatter.format(bytes);
-    print(output);
     expect(output, equals('A9 05'));
   });
 }
