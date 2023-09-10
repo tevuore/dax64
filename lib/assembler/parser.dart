@@ -29,7 +29,7 @@ class Parser {
     return program;
   }
 
-  AsmProgramLine parseLine(int lineNumber, String unmodifiedLine) {
+  AsmProgramLine parseLine(final int lineNumber, final String unmodifiedLine) {
     var line = unmodifiedLine.trim();
 
     // skip empty lines
