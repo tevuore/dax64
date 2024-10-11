@@ -65,7 +65,7 @@ Simply execute `dart test` in the root directory of the project.
 
 At the moment there is no precompiled binaries available. You need to install Dart SDK.
 
-- Dart 3.0.5 has been currently used for development.
+- Dart 3.5.3 has been currently used for development.
 
 You can either compile with `dart compile` or run directly with `dart run`. Latter is used int this
 document.
@@ -109,7 +109,8 @@ There is `run.sh` script which combines assembling, basic loader and execution.
 ### 6502 Opcodes
 
 Opcodes are not hard coded in the code. Instead they are read from json file which is converted from
-https://raw.githubusercontent.com/ericTheEchidna/65C02-JSON/main/opcodes_65c02.json to format better suited for dax64.
+https://raw.githubusercontent.com/ericTheEchidna/65C02-JSON/main/opcodes_65c02.json to format better
+suited for dax64.
 
 Opcodes are preloaded but they can be redownloaded by running  `dart run bin/download_opcodes.dart`.
 
@@ -118,9 +119,11 @@ Then you need to generate model classes from json, run
 
 The json_to_model uses flutter foundation package which is not available in plain Dart.
 Replace flutter foundation import with meta package in generated files under `lib/models/generated`.
- * `import 'package:flutter/foundation.dart';` -> `import 'package:meta/meta.dart';`
+
+* `import 'package:flutter/foundation.dart';` -> `import 'package:meta/meta.dart';`
 
 Finally run `dart format lib/models/generated`
+
 ### Byte handling in Dart
 
 Dart doesn't support 8-bit byte as data type. Instead they need to be handled

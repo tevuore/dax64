@@ -34,5 +34,5 @@ Uint8List parse(String input) {
     }
   }
 
-  return UnmodifiableUint8ListView(allNumbers.takeBytes());
+  return allNumbers.takeBytes().asUnmodifiableView();
 }

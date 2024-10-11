@@ -1,17 +1,18 @@
 import 'package:dax64/assembler/addressing_modes.dart';
-import 'package:dax64/assembler/parser.dart';
+import 'package:dax64/assembler/assembler_config.dart';
+import 'package:dax64/assembler/parsers/parser.dart';
 import 'package:dax64/formatter/hex_formatter.dart';
-import 'package:dax64/models/asm_program.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/opcodes_loader.dart';
 import 'package:test/test.dart';
 
+import 'parser_test_util.dart';
+
 void main() {
-  late Opcodes opcodes;
   late Parser parser;
   setUp(() async {
-    opcodes = await readOpcodes();
-    parser = Parser(opcodes: opcodes);
+    Opcodes opcodes = await readOpcodes();
+    parser = Parser(config: AssemblerConfig(opcodes: opcodes));
   });
 
   test('should parse multiple lines', () async {
@@ -129,21 +130,4 @@ void main() {
   //   expect(elements[0].operand, equals(r'$00'));
   //   expect(elements[0].comment, equals('starting char'));
   // });
-}
-
-AssemblyInstruction extractSingleAssemblyInstruction(AsmProgram program) {
-  final lines = program.blocks[0].lines;
-  expect(lines.length, equals(1));
-  return lines[0].statement as AssemblyInstruction;
-}
-
-/// utility function to extract parsed line information
-AsmProgramLine takeSingleLineFromSingleBlock(AsmProgram program) {
-  expect(program.blocks.length, equals(1));
-  expect(program.blocks[0].lines.length, equals(1));
-  return program.blocks[0].lines[0];
-}
-
-AssemblyInstruction toAssemblyInstruction(AsmProgramLine line) {
-  return line.statement as AssemblyInstruction;
 }

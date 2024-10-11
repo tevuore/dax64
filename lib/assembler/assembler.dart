@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:dax64/assembler/addressing_modes.dart';
+import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
-import 'package:dax64/assembler/parser.dart';
+import 'package:dax64/assembler/parsers/parser.dart';
 import 'package:dax64/models/asm_program.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/utils/hex8bit.dart';
@@ -18,7 +19,8 @@ class Assembler {
   }
 
   Uint8List assemble(String input) {
-    final program = Parser(opcodes: opcodes).parse(input);
+    final config = AssemblerConfig(opcodes: opcodes);
+    final program = Parser(config: config).parse(input);
 
     // we need to go through program twice
     //  - 1st round to find all labels and macro statement (TODO impl)

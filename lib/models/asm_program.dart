@@ -5,6 +5,8 @@ import 'package:dax64/assembler/errors.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/utils/hex8bit.dart';
 
+import '../assembler/parsers/line_parsers.dart';
+
 // TOOO how to implement as immutable?
 
 class AsmProgram {
@@ -30,6 +32,11 @@ class AsmProgramLine {
   AsmProgramLine.withoutStatement(
       {required this.lineNumber, required this.originalLine, this.comment})
       : statement = EmptyStatement.empty();
+
+  AsmProgramLine.withoutStatementFromState(ParsingState state, {this.comment})
+      : lineNumber = state.lineNumber,
+        originalLine = state.line,
+        statement = EmptyStatement.empty();
 }
 
 sealed class Statement {
@@ -48,7 +55,7 @@ sealed class Statement {
     if (_label == null) {
       throw AssemblerError('Statement has no label');
     }
-    return _label!;
+    return _label;
   }
 
   bool hasLabel() => _label != null;
@@ -69,8 +76,8 @@ class LabelStatement extends Statement {
 sealed class AssemblyStatement extends Statement {
   int? memoryAddress; // TODO should be only in machine instructions
 
-  AssemblyStatement({this.memoryAddress, String? label})
-      : super(shouldAssemble: true, label: label);
+  AssemblyStatement({this.memoryAddress, super.label})
+      : super(shouldAssemble: true);
 }
 
 class AssemblyInstruction extends AssemblyStatement {
@@ -83,11 +90,10 @@ class AssemblyInstruction extends AssemblyStatement {
     required this.instructionSpec,
     required this.opcode,
     this.operand,
-    String? label,
+    super.label,
     int? location,
   }) : super(
           memoryAddress: location,
-          label: label,
         );
 }
 
@@ -96,15 +102,14 @@ class AssemblyData extends AssemblyStatement {
   List<String> values = [];
 
   AssemblyData(
-      {required this.type, required this.values, String? label, int? location})
+      {required this.type, required this.values, super.label, int? location})
       : super(
           memoryAddress: location,
-          label: label,
         );
 }
 
 sealed class MacroStatement extends Statement {
-  MacroStatement({String? label}) : super(shouldAssemble: false, label: label);
+  MacroStatement({super.label}) : super(shouldAssemble: false);
 }
 
 class MacroDefinition extends MacroStatement {

@@ -13,7 +13,7 @@ class InstructionInstance {
       {required this.instruction,
       required this.opcode,
       required Uint8List instructionBytes})
-      : paramBytes = UnmodifiableUint8ListView(instructionBytes);
+      : paramBytes = instructionBytes.asUnmodifiableView();
 }
 
 class InstructionSet {}
