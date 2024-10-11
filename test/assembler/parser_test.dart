@@ -79,8 +79,8 @@ void main() {
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
 
-    // TODO test something is null
     expect(line.comment, equals('some comment'));
+    expect(line.statement.shouldAssemble, isFalse);
   });
 
   test('should ignore empty line with whitespace', () async {
