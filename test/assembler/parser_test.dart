@@ -83,6 +83,16 @@ void main() {
     expect(line.statement.shouldAssemble, isFalse);
   });
 
+  test('should parse just comment character', () async {
+    final input = r'  ;';
+
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+
+    expect(line.comment, equals(''));
+    expect(line.statement.shouldAssemble, isFalse);
+  });
+
   test('should ignore empty line with whitespace', () async {
     final input = r'  ';
 
