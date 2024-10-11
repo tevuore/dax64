@@ -73,17 +73,6 @@ void main() {
     expect(line.comment, equals('Load Y'));
   });
 
-  // TODO how this should be handled
-  // test('should parse label line', () async {
-  //   final input = r'LABEL1';
-  //
-  //   final program = parser.parse(input);
-  //   final line = takeSingleLineFromSingleBlock(program);
-  //   final instruction = toAssemblyInstruction(line);
-  //
-  //   expect(instruction.label, equals('LABEL1'));
-  // });
-
   test('should parse comment line', () async {
     final input = r'  ; some comment ';
 
