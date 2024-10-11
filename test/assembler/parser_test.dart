@@ -2,10 +2,11 @@ import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/parsers/parser.dart';
 import 'package:dax64/formatter/hex_formatter.dart';
-import 'package:dax64/models/asm_program.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/opcodes_loader.dart';
 import 'package:test/test.dart';
+
+import 'parser_test_util.dart';
 
 void main() {
   late Parser parser;
@@ -102,29 +103,6 @@ void main() {
     expect(program.blocks[0].lines.length, equals(1));
   });
 
-  test('should parse standalone label', () async {
-    final input = r'LABEL1:';
-
-    final program = parser.parse(input);
-    final line = takeSingleLineFromSingleBlock(program);
-    final label = line.statement as LabelStatement;
-
-    expect(label.label, equals('LABEL1'));
-    expect(line.comment, isNull);
-  });
-
-  test('should parse standalone label with trailing comment', () async {
-    final input = r'LABEL1:                ; Loop starts here';
-
-    final program = parser.parse(input);
-    final line = takeSingleLineFromSingleBlock(program);
-    final label = line.statement as LabelStatement;
-
-    expect(label.label, equals('LABEL1'));
-    // all after ';' char
-    expect(line.comment, equals(' Loop starts here'));
-  });
-
   // TODO test
   // test('should parse .BYTE with multiple values', () async {
   //   final input = r'LABEL1  .BYTE $00,$01,$02   ; characters';
@@ -152,21 +130,4 @@ void main() {
   //   expect(elements[0].operand, equals(r'$00'));
   //   expect(elements[0].comment, equals('starting char'));
   // });
-}
-
-AssemblyInstruction extractSingleAssemblyInstruction(AsmProgram program) {
-  final lines = program.blocks[0].lines;
-  expect(lines.length, equals(1));
-  return lines[0].statement as AssemblyInstruction;
-}
-
-/// utility function to extract parsed line information
-AsmProgramLine takeSingleLineFromSingleBlock(AsmProgram program) {
-  expect(program.blocks.length, equals(1));
-  expect(program.blocks[0].lines.length, equals(1));
-  return program.blocks[0].lines[0];
-}
-
-AssemblyInstruction toAssemblyInstruction(AsmProgramLine line) {
-  return line.statement as AssemblyInstruction;
 }
