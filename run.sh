@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e option
 
 filename=$(basename -- "$1")
 extension="${filename##*.}"

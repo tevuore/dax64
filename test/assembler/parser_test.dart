@@ -113,6 +113,18 @@ void main() {
     expect(line.comment, isNull);
   });
 
+  test('should parse standalone label with trailing comment', () async {
+    final input = r'LABEL1:                ; Loop starts here';
+
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+    final label = line.statement as LabelStatement;
+
+    expect(label.label, equals('LABEL1'));
+    // all after ';' char
+    expect(line.comment, equals(' Loop starts here'));
+  });
+
   // TODO test
   // test('should parse .BYTE with multiple values', () async {
   //   final input = r'LABEL1  .BYTE $00,$01,$02   ; characters';
