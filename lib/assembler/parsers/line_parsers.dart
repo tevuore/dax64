@@ -56,23 +56,6 @@ AsmProgramLine? tryParseEmptyLine(ParsingState state, _) {
       : null;
 }
 
-AsmProgramLine? tryParseCommentLine(ParsingState state, _) {
-  // comments only lines
-  if (!state.trimmedLine.startsWith(';')) return null;
-
-  final regex = RegExp(r'^[ \t]*;(.*)$');
-  final match = regex.firstMatch(state.line);
-  if (match != null) {
-    final comment = match.group(1);
-    return AsmProgramLine.withoutStatementFromState(state,
-        comment: comment!.trim());
-  }
-
-  throw AssemblerError(
-    'Failed to parse comment from line: ${state.lineNumber}: ${state.line}',
-  );
-}
-
 // TODO not sure why on own line you need ':' at the end, but on statement line not
 
 AsmProgramLine? tryParseLabelOnOwnLine(
