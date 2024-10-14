@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:dax64/models/instruction.dart';
+import 'package:dax64/models/disasm_program.dart';
 import 'package:dax64/utils/hex8bit.dart';
 
 class HexFormatter {
@@ -10,7 +10,7 @@ class HexFormatter {
     return hexCodes.join(' ');
   }
 
-  static Uint8List formatToBytes(Program program) {
+  static Uint8List formatToBytes(DisasmProgram program) {
     final buffer = Uint8List(program.instructions.length * 3);
 
     for (var instruction in program.instructions) {

@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:dax64/assembler/errors.dart';
+import 'package:dax64/models/disasm_program.dart';
 import 'package:dax64/models/generated/opcodes.dart';
-import 'package:dax64/models/instruction.dart';
 import 'package:dax64/utils/hex8bit.dart';
 
 class Disassembler {
@@ -18,8 +18,8 @@ class Disassembler {
     }
   }
 
-  Program disassemble(Uint8List bytes) {
-    final program = Program();
+  DisasmProgram disassemble(Uint8List bytes) {
+    final program = DisasmProgram();
     var i = 0;
     while (i < bytes.length) {
       var opcode = bytes[i];

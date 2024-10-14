@@ -5,6 +5,12 @@ import 'package:dax64/assembler/parsers/label.dart';
 import 'package:dax64/models/generated/index.dart';
 
 import '../../models/asm_program.dart';
+import '../../models/statement/assembly.dart';
+import '../../models/statement/empty.dart';
+import '../../models/statement/label.dart';
+import '../../models/statement/macro.dart';
+import '../../models/statement/operand.dart';
+import 'operand_parser.dart';
 
 AsmProgramLine parseStatementLine(final int lineNumber,
     final String unmodifiedLine, final AssemblerConfig config) {

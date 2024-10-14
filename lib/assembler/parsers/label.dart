@@ -3,6 +3,7 @@ import 'package:dax64/assembler/parsers/parser_state.dart';
 import 'package:dax64/utils/string_extensions.dart';
 
 import '../../models/asm_program.dart';
+import '../../models/statement/label.dart';
 import '../assembler_config.dart';
 import 'comment.dart';
 

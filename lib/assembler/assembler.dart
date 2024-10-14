@@ -3,10 +3,16 @@ import 'dart:typed_data';
 import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
+import 'package:dax64/assembler/parsers/operand_parser.dart';
 import 'package:dax64/assembler/parsers/parser.dart';
 import 'package:dax64/models/asm_program.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/utils/hex8bit.dart';
+
+import '../models/statement/assembly.dart';
+import '../models/statement/empty.dart';
+import '../models/statement/label.dart';
+import '../models/statement/macro.dart';
 
 class Assembler {
   final Opcodes opcodes;

@@ -2,6 +2,8 @@ import 'package:dax64/assembler/parsers/label.dart';
 import 'package:dax64/assembler/parsers/parser_state.dart';
 
 import '../../models/asm_program.dart';
+import '../../models/statement/assembly.dart';
+import '../../models/statement/macro.dart';
 import 'comment.dart';
 
 final dataStatementRegex =
