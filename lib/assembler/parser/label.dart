@@ -20,6 +20,7 @@ void validateLabel(String? label) {
 }
 
 // TODO not sure why on own line you need ':' at the end, but on statement line not
+// TODO label can be on its own line and then it refers to following instruction
 
 AsmProgramLine? tryParseLabelOnOwnLine(
     ParsingState state, final AssemblerConfig config) {

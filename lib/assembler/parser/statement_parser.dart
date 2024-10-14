@@ -10,18 +10,17 @@ import '../../models/statement/empty.dart';
 import '../../models/statement/label.dart';
 import '../../models/statement/macro.dart';
 import '../../models/statement/operand.dart';
+import 'comment.dart';
 import 'operand_parser.dart';
 
 AsmProgramLine parseStatementLine(final int lineNumber,
     final String unmodifiedLine, final AssemblerConfig config) {
   // instruction line syntax
   // (label) opcode (operand) (comments)
-  // TODO label can be on its own line and then it refers to following instruction
 
   var state = unmodifiedLine.trim();
-
   String? comment;
-  (comment, state) = parseTrailingComment(state);
+  (state, comment) = tryParseTrailingComment(state);
 
   final macroAssignment = parseMacroAssignment(lineNumber, state, comment);
   if (macroAssignment != null) return macroAssignment;
@@ -120,21 +119,6 @@ AsmProgramLine parseStatementLine(final int lineNumber,
 
 typedef Comment = String;
 typedef LineParsingState = String;
-
-(Comment?, LineParsingState) parseTrailingComment(
-    final String lineParsingState) {
-  // take away all after comment char. Note that we require always ; for
-  // comments and ; is reserved for comments only
-  final line = lineParsingState.trim();
-  final indexOfSemiComma = line.indexOf(';');
-  if (indexOfSemiComma > 0) {
-    final comment = line.substring(indexOfSemiComma + 1).trim();
-    final remainingLine = line.substring(0, indexOfSemiComma).trim();
-    return (comment, remainingLine);
-  }
-
-  return (null, lineParsingState);
-}
 
 AsmProgramLine? parseMacroAssignment(
   final int lineNumber,
