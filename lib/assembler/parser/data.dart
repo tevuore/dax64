@@ -1,5 +1,5 @@
-import 'package:dax64/assembler/parsers/label.dart';
-import 'package:dax64/assembler/parsers/parser_state.dart';
+import 'package:dax64/assembler/parser/label.dart';
+import 'package:dax64/assembler/parser/parser_state.dart';
 
 import '../../models/asm_program.dart';
 import '../../models/statement/assembly.dart';

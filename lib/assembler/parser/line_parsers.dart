@@ -1,9 +1,9 @@
 import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
-import 'package:dax64/assembler/parsers/comment.dart';
-import 'package:dax64/assembler/parsers/label.dart';
-import 'package:dax64/assembler/parsers/parser_state.dart';
-import 'package:dax64/assembler/parsers/statement_parser.dart';
+import 'package:dax64/assembler/parser/comment.dart';
+import 'package:dax64/assembler/parser/label.dart';
+import 'package:dax64/assembler/parser/parser_state.dart';
+import 'package:dax64/assembler/parser/statement_parser.dart';
 import 'package:dax64/models/asm_program.dart';
 
 import 'data.dart';

@@ -1,5 +1,5 @@
 import 'package:dax64/assembler/errors.dart';
-import 'package:dax64/assembler/parsers/parser_state.dart';
+import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/utils/string_extensions.dart';
 
 import '../../models/asm_program.dart';

@@ -1,7 +1,7 @@
 import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
-import 'package:dax64/assembler/parsers/label.dart';
+import 'package:dax64/assembler/parser/label.dart';
 import 'package:dax64/models/generated/index.dart';
 
 import '../../models/asm_program.dart';

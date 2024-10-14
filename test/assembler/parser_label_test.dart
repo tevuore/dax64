@@ -1,7 +1,7 @@
 import 'package:dax64/assembler/assembler_config.dart';
-import 'package:dax64/assembler/parsers/parser.dart';
-import 'package:dax64/models/asm_program.dart';
+import 'package:dax64/assembler/parser/parser.dart';
 import 'package:dax64/models/generated/index.dart';
+import 'package:dax64/models/statement/label.dart';
 import 'package:dax64/opcodes_loader.dart';
 import 'package:test/test.dart';
 

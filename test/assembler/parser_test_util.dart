@@ -1,4 +1,5 @@
 import 'package:dax64/models/asm_program.dart';
+import 'package:dax64/models/statement/assembly.dart';
 import 'package:test/expect.dart';
 
 AssemblyInstruction extractSingleAssemblyInstruction(AsmProgram program) {

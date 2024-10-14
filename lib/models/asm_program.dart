@@ -1,4 +1,4 @@
-import 'package:dax64/assembler/parsers/parser_state.dart';
+import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/models/statement/empty.dart';
 import 'package:dax64/models/statement/statement.dart';
 
