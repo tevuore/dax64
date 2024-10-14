@@ -8,8 +8,8 @@ import '../../models/asm_program.dart';
 import '../../models/statement/assembly.dart';
 import '../../models/statement/empty.dart';
 import '../../models/statement/label.dart';
-import '../../models/statement/macro.dart';
 import '../../models/statement/operand.dart';
+import 'assignment.dart';
 import 'comment.dart';
 import 'operand_parser.dart';
 
@@ -117,29 +117,7 @@ AsmProgramLine parseStatementLine(final int lineNumber,
       ));
 }
 
-typedef Comment = String;
 typedef LineParsingState = String;
-
-AsmProgramLine? parseMacroAssignment(
-  final int lineNumber,
-  final String state,
-  final Comment? comment,
-) {
-  // match to pattern
-  //   my_const = 0xaf
-  final regex = RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]+)[ \t]?=[ \t]?(.+)$');
-  final m = regex.firstMatch(state);
-  if (m == null) return null;
-
-  final valueName = m.group(1);
-  final value = m.group(2);
-
-  return AsmProgramLine(
-      lineNumber: lineNumber,
-      originalLine: state,
-      comment: comment,
-      statement: MacroAssignment(name: valueName!, value: value!));
-}
 
 // TODO
 // class LineParsingState {
