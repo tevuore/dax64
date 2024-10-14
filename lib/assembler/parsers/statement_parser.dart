@@ -12,16 +12,10 @@ AsmProgramLine parseStatementLine(final int lineNumber,
   // (label) opcode (operand) (comments)
   // TODO label can be on its own line and then it refers to following instruction
 
-  // TODO use this?
-  //var state = LineParsingState(unmodifiedLine, unmodifiedLine.trim());
   var state = unmodifiedLine.trim();
 
   String? comment;
   (comment, state) = parseTrailingComment(state);
-
-  final dataStatement =
-      parseDataDefinitionWithOptionalLabel(lineNumber, state, comment);
-  if (dataStatement != null) return dataStatement;
 
   final macroAssignment = parseMacroAssignment(lineNumber, state, comment);
   if (macroAssignment != null) return macroAssignment;
@@ -134,39 +128,6 @@ typedef LineParsingState = String;
   }
 
   return (null, lineParsingState);
-}
-
-// TODO we could include linenumber to state
-AsmProgramLine? parseDataDefinitionWithOptionalLabel(
-  final int lineNumber,
-  final String state,
-  final Comment? comment,
-) {
-  // match to pattern
-  // (label) .datatype <value>(,<value>)
-  final regex =
-      RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*\.([a-zA-Z]+)[ ]+(.*)$');
-
-  // TODO improve regex to work properly with label+whitespace.
-  //      Create test, not sure what is problem...
-
-  var m = regex.firstMatch(state);
-  if (m == null) return null;
-
-  String? label;
-  if (m.group(1) != null) {
-    label = m.group(1);
-  }
-  var dataType = MacroValueType.values.byName(m.group(2)!.toLowerCase());
-
-  var valueList = m.group(3);
-  var values = valueList!.split(',').map((e) => e.trim()).toList();
-
-  return AsmProgramLine(
-      lineNumber: lineNumber,
-      originalLine: state,
-      comment: comment,
-      statement: AssemblyData(label: label, type: dataType, values: values));
 }
 
 AsmProgramLine? parseMacroAssignment(

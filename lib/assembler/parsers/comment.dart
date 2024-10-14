@@ -1,6 +1,7 @@
+import 'package:dax64/assembler/parsers/parser_state.dart';
+
 import '../../models/asm_program.dart';
 import '../errors.dart';
-import 'line_parsers.dart';
 
 AsmProgramLine? tryParseCommentLine(ParsingState state, _) {
   // comments only lines
