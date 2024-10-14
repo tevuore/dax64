@@ -2,9 +2,11 @@ import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
 import 'package:dax64/assembler/parsers/comment.dart';
 import 'package:dax64/assembler/parsers/label.dart';
+import 'package:dax64/assembler/parsers/parser_state.dart';
 import 'package:dax64/assembler/parsers/statement_parser.dart';
 import 'package:dax64/models/asm_program.dart';
-import 'package:dax64/utils/string_extensions.dart';
+
+import 'data.dart';
 
 /// Assembly code is parsed one line at a time
 
@@ -18,6 +20,7 @@ final List<TryParser> lineParserPipeline = [
   tryParseEmptyLine,
   tryParseCommentLine,
   tryParseLabelOnOwnLine,
+  tryParseDataLine,
   tryParseStatement,
   noMatchingParser,
 ];
@@ -27,14 +30,6 @@ typedef TryParser = AsmProgramLine? Function(
     ParsingState state, AssemblerConfig config);
 
 // TODO a single parser could try to iterate to next line too... well then return type would be a list
-
-class ParsingState {
-  final int lineNumber;
-  final String line;
-  final String trimmedLine;
-
-  ParsingState(this.lineNumber, this.line) : trimmedLine = line.trim();
-}
 
 AsmProgramLine parseAsmProgramLine(
     final lineNumber, final String line, final AssemblerConfig config) {
@@ -54,25 +49,6 @@ AsmProgramLine? tryParseEmptyLine(ParsingState state, _) {
   return state.trimmedLine.isEmpty
       ? AsmProgramLine.withoutStatementFromState(state)
       : null;
-}
-
-// TODO not sure why on own line you need ':' at the end, but on statement line not
-
-AsmProgramLine? tryParseLabelOnOwnLine(
-    ParsingState state, final AssemblerConfig config) {
-  // there could be a trailing comment
-  var (remainingLine, comment) = tryParseTrailingComment(state.line);
-
-  if (!remainingLine.trim().endsWith(':')) return null;
-
-  final label = remainingLine.trim().dropLastChar();
-  validateLabel(label);
-
-  return AsmProgramLine(
-      lineNumber: state.lineNumber,
-      originalLine: state.line,
-      comment: comment,
-      statement: LabelStatement(label: label));
 }
 
 AsmProgramLine? tryParseStatement(

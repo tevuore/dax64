@@ -2,10 +2,9 @@ import 'dart:typed_data';
 
 import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/errors.dart';
+import 'package:dax64/assembler/parsers/parser_state.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/utils/hex8bit.dart';
-
-import '../assembler/parsers/line_parsers.dart';
 
 // TOOO how to implement as immutable?
 
