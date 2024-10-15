@@ -1,6 +1,5 @@
 // TODO could we have attribute that defines whether operand bytes should be expected?
 
-
 enum AddressingMode {
   absolute,
   absoluteX,
