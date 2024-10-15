@@ -25,6 +25,17 @@ void main() {
     expect(line.comment, isNull);
   });
 
+  test('should parse standalone label with indent', () async {
+    final input = r'      LABEL1:';
+
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+    final label = line.statement as LabelStatement;
+
+    expect(label.label, equals('LABEL1'));
+    expect(line.comment, isNull);
+  });
+
   test('should parse standalone label with trailing comment', () async {
     final input = r'LABEL1:                ; Loop starts here';
 
@@ -37,5 +48,3 @@ void main() {
     expect(line.comment, equals('Loop starts here'));
   });
 }
-
-// TODO add test for label with indent, to both parsing methods
