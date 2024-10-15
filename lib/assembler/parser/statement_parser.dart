@@ -66,10 +66,6 @@ AsmProgramLine parseStatementLine(final int lineNumber,
     label = parts[0]; // TeroV verify what is created based on this
   }
 
-  // TODO there are other places where label is parsed, same validation everywhere!
-  // TODO here for label ':' is not allowed, does it make sense?
-  validateLabel(label);
-
   if (opcode == null) {
     return AsmProgramLine(
         lineNumber: lineNumber,

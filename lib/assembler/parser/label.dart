@@ -7,20 +7,16 @@ import '../../models/statement/label.dart';
 import '../assembler_config.dart';
 import 'comment.dart';
 
-final labelRegex = RegExp(r'^[ \t]*([a-zA-Z_][a-zA-Z0-9_]*):$');
+final labelRegex = RegExp(r'^[ \t]*([a-zA-Z_][a-zA-Z0-9_]*:).*$');
 
 void validateLabel(String? label) {
   if (label == null) {
     return;
   }
-  var regex = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*$');
-  if (!regex.hasMatch(label)) {
+  if (!labelRegex.hasMatch(label.trim())) {
     throw AssemblerError('Invalid label: $label');
   }
 }
-
-// TODO not sure why on own line you need ':' at the end, but on statement line not
-// TODO label can be on its own line and then it refers to following instruction
 
 AsmProgramLine? tryParseLabelOnOwnLine(
     ParsingState state, final AssemblerConfig config) {
@@ -29,22 +25,22 @@ AsmProgramLine? tryParseLabelOnOwnLine(
 
   if (!remainingLine.trim().endsWith(':')) return null;
 
-  final label = remainingLine.trim().dropLastChar();
+  final label = remainingLine.trim();
   validateLabel(label);
 
   return AsmProgramLine(
       lineNumber: state.lineNumber,
       originalLine: state.line,
       comment: comment,
-      statement: LabelStatement(label: label));
+      statement: LabelStatement(label: label.dropLastChar()));
 }
 
 (String remainingLine, Label? label) tryParsePrecedingLabel(String line) {
-  final match = labelRegex.firstMatch(line);
+  final match = labelRegex.firstMatch(line.trim());
   if (match != null) {
     final label = match.group(1)!.trim();
     final remainingLine = line.replaceFirst(label, '').trimLeft();
-    return (remainingLine, label);
+    return (remainingLine, label.dropLastChar());
   }
 
   return (line, null);

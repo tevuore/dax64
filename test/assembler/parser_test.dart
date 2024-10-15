@@ -60,7 +60,7 @@ void main() {
   });
 
   test('should parse opcode with label', () async {
-    final input = r'LABEL1  LDY #$00       ; Load Y';
+    final input = r'LABEL1:  LDY #$00       ; Load Y';
 
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
