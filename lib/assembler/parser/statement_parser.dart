@@ -2,6 +2,7 @@ import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
 import 'package:dax64/assembler/parser/label.dart';
+import 'package:dax64/assembler/parser/types.dart';
 import 'package:dax64/models/generated/index.dart';
 
 import '../../models/asm_program.dart';
@@ -9,7 +10,6 @@ import '../../models/statement/assembly.dart';
 import '../../models/statement/empty.dart';
 import '../../models/statement/label.dart';
 import '../../models/statement/operand.dart';
-import 'assignment.dart';
 import 'comment.dart';
 import 'operand_parser.dart';
 
@@ -19,13 +19,12 @@ AsmProgramLine parseStatementLine(final int lineNumber,
   // (label) opcode (operand) (comments)
 
   var state = unmodifiedLine.trim();
-  String? comment;
+  Comment? comment;
   (state, comment) = tryParseTrailingComment(state);
 
-  final macroAssignment = parseMacroAssignment(lineNumber, state, comment);
-  if (macroAssignment != null) return macroAssignment;
+  Label? label;
+  (state, label) = tryParsePrecedingLabel(state);
 
-  String? label;
   String? opcode;
   String? operand;
 
@@ -116,18 +115,6 @@ AsmProgramLine parseStatementLine(final int lineNumber,
         operand: Operand(addressingMode: addressingMode, value: operandValue),
       ));
 }
-
-typedef LineParsingState = String;
-
-// TODO
-// class LineParsingState {
-//   final String originalLine;
-//   final String currentPart;
-//
-//   LineParsingState(this.originalLine, this.currentPart) {}
-//
-//   LineParsingState copy({required String newCurrentPart}) { return LineParsingState(originalLine, newCurrentPart); }
-// }
 
 List<String> splitInstructionLine(String input) {
   input = input.trim();

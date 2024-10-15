@@ -34,6 +34,8 @@ void main() {
 
     expect(label.label, equals('LABEL1'));
     // all after ';' char
-    expect(line.comment, equals(' Loop starts here'));
+    expect(line.comment, equals('Loop starts here'));
   });
 }
+
+// TODO add test for label with indent, to both parsing methods

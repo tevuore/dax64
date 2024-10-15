@@ -39,13 +39,15 @@ AsmProgramLine? tryParseLabelOnOwnLine(
       statement: LabelStatement(label: label));
 }
 
-(String remainingLine, String? label) tryParsePrecedingLabel(String line) {
+(String remainingLine, Label? label) tryParsePrecedingLabel(String line) {
   final match = labelRegex.firstMatch(line);
   if (match != null) {
-    final label = match.group(1);
-    final remainingLine = line.replaceFirst(label!, '').trimLeft();
+    final label = match.group(1)!.trim();
+    final remainingLine = line.replaceFirst(label, '').trimLeft();
     return (remainingLine, label);
   }
 
   return (line, null);
 }
+
+typedef Label = String;

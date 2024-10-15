@@ -4,12 +4,13 @@ import 'package:dax64/assembler/parser/parser_state.dart';
 import '../../models/asm_program.dart';
 import '../../models/statement/assembly.dart';
 import '../../models/statement/macro.dart';
+import '../assembler_config.dart';
 import 'comment.dart';
 
 final dataStatementRegex =
     RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*\.([a-zA-Z]+)[ ]+(.*)$');
 
-AsmProgramLine? tryParseDataLine(ParsingState state, _) {
+AsmProgramLine? tryParseDataLine(ParsingState state, final AssemblerConfig _) {
   // match to pattern
   // (label:) .datatype <value>(,<value>) (;comment)
 

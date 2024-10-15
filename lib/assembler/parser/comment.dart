@@ -2,9 +2,11 @@ import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/assembler/parser/types.dart';
 
 import '../../models/asm_program.dart';
+import '../assembler_config.dart';
 import '../errors.dart';
 
-AsmProgramLine? tryParseCommentLine(ParsingState state, _) {
+AsmProgramLine? tryParseCommentLine(
+    ParsingState state, final AssemblerConfig _) {
   // comments only lines
   if (!state.trimmedLine.startsWith(';')) return null;
 
@@ -26,7 +28,7 @@ AsmProgramLine? tryParseCommentLine(ParsingState state, _) {
   if (commentStartIndex < 0) return (line, null);
 
   // we treat all chars after ';' as a comment
-  Comment comment = line.substring(commentStartIndex + 1, line.length);
+  Comment comment = line.substring(commentStartIndex + 1, line.length).trim();
   String remainingLine = line.substring(0, commentStartIndex);
 
   return (remainingLine, comment);

@@ -6,6 +6,7 @@ import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/assembler/parser/statement_parser.dart';
 import 'package:dax64/models/asm_program.dart';
 
+import 'assignment.dart';
 import 'data.dart';
 
 /// Assembly code is parsed one line at a time
@@ -21,6 +22,7 @@ final List<TryParser> lineParserPipeline = [
   tryParseCommentLine,
   tryParseLabelOnOwnLine,
   tryParseDataLine,
+  tryParseMacroAssignment,
   tryParseStatement,
   noMatchingParser,
 ];
