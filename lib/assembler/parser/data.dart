@@ -7,13 +7,11 @@ import '../../models/statement/macro.dart';
 import '../assembler_config.dart';
 import 'comment.dart';
 
-final dataStatementRegex =
-    RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*\.([a-zA-Z]+)[ ]+(.*)$');
+// match to pattern
+//   (label:) .datatype <value>(,<value>) (;comment)
+final dataRegex = RegExp(r'^[ \t]*\.([a-zA-Z0-9]+)[ ]+(.*)$');
 
 AsmProgramLine? tryParseDataLine(ParsingState state, final AssemblerConfig _) {
-  // match to pattern
-  // (label:) .datatype <value>(,<value>) (;comment)
-
   // there could be a trailing comment
   final (remainingLine, comment) = tryParseTrailingComment(state.trimmedLine);
 
@@ -22,12 +20,11 @@ AsmProgramLine? tryParseDataLine(ParsingState state, final AssemblerConfig _) {
   // data pseudo code starts with '.' char
   if (!remainingLine2.startsWith('.')) null;
 
-  final regex = RegExp(r'^[ \t]*\.([a-z]+)[ \t]+(.*)$');
-  final match = regex.firstMatch(remainingLine2);
+  final match = dataRegex.firstMatch(remainingLine2);
   if (match == null) return null;
 
   final dataTypeStr = match.group(1)!;
-  var dataType = MacroValueType.values.byName(dataTypeStr);
+  var dataType = MacroValueType.values.byName(dataTypeStr.toLowerCase());
 
   final valueList = match.group(2)!.trim();
   final values = valueList.split(',').map((e) => e.trim()).toList();

@@ -101,32 +101,6 @@ void main() {
     expect(program.blocks.length, equals(1));
     expect(program.blocks[0].lines.length, equals(1));
   });
-
-  // TODO test
-  // test('should parse .BYTE with multiple values', () async {
-  //   final input = r'LABEL1  .BYTE $00,$01,$02   ; characters';
-  //
-  //   final program = parser.parse(input);
-  //   final line = takeSingleLineFromSingleBlock(program);
-  //   final instruction = toAssemblyInstruction(line);
-  //
-  //   expect(instruction.label, equals('LABEL1'));
-  //   expect(elements[0].instruction, equals('.BYTE'));
-  //   expect(elements[0].operand, equals(r'$00,$01,$02'));
-  //   expect(elements[0].comment, equals('characters'));
-  // });
-
-  // TODO impl
-  // test('should parse .BYTE', () async {
-  //   final input = r'LABEL1  .BYTE $00    ; starting char';
-  //
-  //   final program = parser.parse(input);
-  //   final line = takeSingleLineFromSingleBlock(program);
-  //   final instruction = toAssemblyInstruction(line);
-  //
-  //   expect(instruction.label, equals('LABEL1'));
-  //   expect(elements[0].instruction, equals('.BYTE'));
-  //   expect(elements[0].operand, equals(r'$00'));
-  //   expect(elements[0].comment, equals('starting char'));
-  // });
 }
+
+// xxx TODO impl & test for operands to have label & variable references
