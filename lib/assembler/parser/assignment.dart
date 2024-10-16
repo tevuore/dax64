@@ -25,5 +25,5 @@ AsmProgramLine? tryParseMacroAssignment(
       lineNumber: state.lineNumber,
       originalLine: state.line,
       comment: comment,
-      statement: MacroAssignment(name: valueName!, value: value!));
+      statement: MacroAssignment(name: valueName!, value: value));
 }
