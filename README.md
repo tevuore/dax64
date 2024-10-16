@@ -106,13 +106,66 @@ There is `run.sh` script which combines assembling, basic loader and execution.
 
 ## Implementation Details
 
+### Terminology
+
+Here is quick summary of terms used in code
+
+* Assembler vs disassembler
+* Opcode
+    * Three character instruction identifier but also hex code
+* Instruction
+    * Machine command which has opcode
+    * Can have an operand
+    * Can support multiple addressing modes
+    * Static constant definition
+* Operand
+    * Additional parameter for opcode
+    * Optional, not all instructions have take operand
+    * Operand is split to addressing mode and operand value
+* AddressingMode
+    * Variant of instruction
+    * Defines how operand value is used
+* OperandValue
+    * Integer or hexadecimal value for instruction operand
+* AssemblyInstruction
+    * Dynamic instance that refers to Instruction and its operand
+    * TODO this term is not widely used
+* Statement
+    * Part of of source code that is unparsed and will be result to
+      AssemblyInstruction if parsing succeeds
+    * Affects to end output binary
+    * Can be
+        * AssemblyInstruction
+        * Label
+        * Macro
+        * DataAssignment
+        * (EmptyLine)
+            * TODO this is special case at the moment
+* InstructionSet
+    * All supported instructions
+* AssemblyLine (TODO term not in use, AsmProgramLine)
+    * Parsed source code line
+    * May contain a comment
+    * Contains a statement
+    * Contains reference to original source line
+* MemoryAddress
+* Label
+* Comment
+* DataAssignment
+* MacroAssignment
+    * Variable having a value hat can be referred and expanded by variable
+      name
+* Macro
+    * Block of macro code that can be referred and expanded by macro name
+
 ### 6502 Opcodes
 
 Opcodes are not hard coded in the code. Instead they are read from json file which is converted from
 https://raw.githubusercontent.com/ericTheEchidna/65C02-JSON/main/opcodes_65c02.json to format better
 suited for dax64.
 
-Opcodes are preloaded but they can be redownloaded by running  `dart run bin/download_opcodes.dart`.
+Opcodes are preloaded but they can be re-downloaded by
+running  `dart run bin/download_opcodes.dart`.
 
 Then you need to generate model classes from json, run
 `dart run json_to_model -o lib/models/generated`.
