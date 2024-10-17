@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:dax64/formatter/hex_formatter.dart';
+import 'package:dax64/models/disasm_program.dart';
 import 'package:dax64/models/generated/opcodes.dart';
-import 'package:dax64/models/instruction.dart';
 import 'package:dax64/utils/hex8bit.dart';
 
 const commentStartingColumn = 15;
 
 class ProgramFormatter {
-  static String format(Program program,
+  static String format(DisasmProgram program,
       {bool addInstructionDescription = false, bool addBytes = false}) {
     final buffer = StringBuffer();
     for (var instruction in program.instructions) {

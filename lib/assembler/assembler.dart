@@ -3,10 +3,16 @@ import 'dart:typed_data';
 import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
-import 'package:dax64/assembler/parsers/parser.dart';
+import 'package:dax64/assembler/parser/operand_parser.dart';
+import 'package:dax64/assembler/parser/parser.dart';
 import 'package:dax64/models/asm_program.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/utils/hex8bit.dart';
+
+import '../models/statement/assembly.dart';
+import '../models/statement/empty.dart';
+import '../models/statement/label.dart';
+import '../models/statement/macro.dart';
 
 class Assembler {
   final Opcodes opcodes;
@@ -53,6 +59,12 @@ class Assembler {
   Map<String, AsmProgramLine> firstRoundCollectData(AsmProgram program) {
     final labels = <String, AsmProgramLine>{};
 
+    // collect labels and macros to hash maps for easy accessing
+    // NOTE: this loop is a bit extra, as then we in reality going through
+    // lines third times. However 80's memory is so limited that modern
+    // computers don't have any problems to handle it. Extra round makes
+    // code clearer as parsing can be divided own subfunctions.
+
     for (final block in program.blocks) {
       for (final line in block.lines) {
         try {
@@ -96,6 +108,8 @@ class Assembler {
   List<int> secondRoundAssemble(
       AsmProgram program, Map<String, AsmProgramLine> labels) {
     // TODO impl using labels
+
+    // TODO pass info about labels and macros, and memory address
 
     final bytes = <int>[];
     for (final block in program.blocks) {
@@ -145,7 +159,6 @@ class Assembler {
         // operand value is string - it could be label or macro ref, but
         // that is not yet implemented for assembling output
 
-        // TODO why opcode has addressing mode as string? could it have as enum?
         // special case for relative addressing mode
         if (isRelativeJumpInstruction(instructionSpec) &&
             operand.addressingMode == AddressingMode.absolute) {

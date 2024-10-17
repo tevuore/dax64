@@ -1,5 +1,5 @@
 import 'package:dax64/assembler/assembler_config.dart';
-import 'package:dax64/assembler/parsers/line_parsers.dart';
+import 'package:dax64/assembler/parser/line_parsers.dart';
 import 'package:dax64/models/asm_program.dart';
 
 class Parser {

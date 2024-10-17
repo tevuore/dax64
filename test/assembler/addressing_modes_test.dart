@@ -1,4 +1,5 @@
 import 'package:dax64/assembler/addressing_modes.dart';
+import 'package:dax64/assembler/parser/operand_parser.dart';
 import 'package:dax64/formatter/hex_formatter.dart';
 import 'package:test/test.dart';
 

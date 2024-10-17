@@ -1,6 +1,6 @@
 import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/assembler_config.dart';
-import 'package:dax64/assembler/parsers/parser.dart';
+import 'package:dax64/assembler/parser/parser.dart';
 import 'package:dax64/formatter/hex_formatter.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/opcodes_loader.dart';
@@ -60,7 +60,7 @@ void main() {
   });
 
   test('should parse opcode with label', () async {
-    final input = r'LABEL1  LDY #$00       ; Load Y';
+    final input = r'LABEL1:  LDY #$00       ; Load Y';
 
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
@@ -73,25 +73,24 @@ void main() {
     expect(line.comment, equals('Load Y'));
   });
 
-  // TODO how this should be handled
-  // test('should parse label line', () async {
-  //   final input = r'LABEL1';
-  //
-  //   final program = parser.parse(input);
-  //   final line = takeSingleLineFromSingleBlock(program);
-  //   final instruction = toAssemblyInstruction(line);
-  //
-  //   expect(instruction.label, equals('LABEL1'));
-  // });
-
   test('should parse comment line', () async {
     final input = r'  ; some comment ';
 
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
 
-    // TODO test something is null
     expect(line.comment, equals('some comment'));
+    expect(line.statement.shouldAssemble, isFalse);
+  });
+
+  test('should parse just comment character', () async {
+    final input = r'  ;';
+
+    final program = parser.parse(input);
+    final line = takeSingleLineFromSingleBlock(program);
+
+    expect(line.comment, equals(''));
+    expect(line.statement.shouldAssemble, isFalse);
   });
 
   test('should ignore empty line with whitespace', () async {
@@ -102,32 +101,6 @@ void main() {
     expect(program.blocks.length, equals(1));
     expect(program.blocks[0].lines.length, equals(1));
   });
-
-  // TODO test
-  // test('should parse .BYTE with multiple values', () async {
-  //   final input = r'LABEL1  .BYTE $00,$01,$02   ; characters';
-  //
-  //   final program = parser.parse(input);
-  //   final line = takeSingleLineFromSingleBlock(program);
-  //   final instruction = toAssemblyInstruction(line);
-  //
-  //   expect(instruction.label, equals('LABEL1'));
-  //   expect(elements[0].instruction, equals('.BYTE'));
-  //   expect(elements[0].operand, equals(r'$00,$01,$02'));
-  //   expect(elements[0].comment, equals('characters'));
-  // });
-
-  // TODO impl
-  // test('should parse .BYTE', () async {
-  //   final input = r'LABEL1  .BYTE $00    ; starting char';
-  //
-  //   final program = parser.parse(input);
-  //   final line = takeSingleLineFromSingleBlock(program);
-  //   final instruction = toAssemblyInstruction(line);
-  //
-  //   expect(instruction.label, equals('LABEL1'));
-  //   expect(elements[0].instruction, equals('.BYTE'));
-  //   expect(elements[0].operand, equals(r'$00'));
-  //   expect(elements[0].comment, equals('starting char'));
-  // });
 }
+
+// xxx TODO impl & test for operands to have label & variable references

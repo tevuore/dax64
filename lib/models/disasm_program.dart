@@ -3,6 +3,10 @@ import 'dart:typed_data';
 import 'package:dax64/models/generated/index.dart';
 import 'package:meta/meta.dart';
 
+class DisasmProgram {
+  final List<InstructionInstance> instructions = [];
+}
+
 @immutable
 class InstructionInstance {
   final Instruction instruction;
@@ -17,7 +21,3 @@ class InstructionInstance {
 }
 
 class InstructionSet {}
-
-class Program {
-  final List<InstructionInstance> instructions = [];
-}
