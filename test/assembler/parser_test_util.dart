@@ -18,3 +18,7 @@ AsmProgramLine takeSingleLineFromSingleBlock(AsmProgram program) {
 AssemblyInstruction toAssemblyInstruction(AsmProgramLine line) {
   return line.statement as AssemblyInstruction;
 }
+
+AssemblyData toAssemblyData(AsmProgramLine line) {
+  return line.statement as AssemblyData;
+}
