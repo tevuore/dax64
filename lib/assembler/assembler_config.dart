@@ -12,8 +12,7 @@ class AssemblerConfig {
   }
 
   bool isOpcode(String input) {
-    // TeroV remove startWiths if doing nothing
-    return input.startsWith('.') || opcodeMap.containsKey(input.toUpperCase());
+    return opcodeMap.containsKey(input.toUpperCase());
   }
 
   // used case in opcode needs to match to registered opcodes

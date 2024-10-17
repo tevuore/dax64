@@ -158,6 +158,8 @@ Here is quick summary of terms used in code
 * Macro
     * Block of macro code that can be referred and expanded by macro name
 
+TODO: what is AsmProgram and what is AsmBlock terms?
+
 ### 6502 Opcodes
 
 Opcodes are not hard coded in the code. Instead they are read from json file which is converted from

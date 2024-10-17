@@ -4,11 +4,10 @@ import 'package:dax64/assembler/errors.dart';
 import 'package:dax64/assembler/parser/label.dart';
 import 'package:dax64/assembler/parser/types.dart';
 import 'package:dax64/models/generated/index.dart';
+import 'package:dax64/utils/string_extensions.dart';
 
 import '../../models/asm_program.dart';
 import '../../models/statement/assembly.dart';
-import '../../models/statement/empty.dart';
-import '../../models/statement/label.dart';
 import '../../models/statement/operand.dart';
 import 'comment.dart';
 import 'operand_parser.dart';
@@ -25,69 +24,45 @@ AsmProgramLine parseStatementLine(final int lineNumber,
   Label? label;
   (state, label) = tryParsePrecedingLabel(state);
 
+  if (state.trim().isEmpty)
+    throw AssemblerError("No opcode detected on line: $unmodifiedLine");
+
   String? opcode;
   String? operand;
 
   // so it is instruction line, but what kind of?
 
-  // there will 1-4 parts (syntax: (label) opcode (operand) (comments))
-  // either 1st or 2nd part is opcode or asm statement. Unfortunately there
-  // is no character that clearly separates label and opcode.
+  // we have already parsed and taken away possible
+  //  * trailing comment
+  //  * preceding label
+  //
+  // so there will 1-2, syntax: opcode (operand)
 
-  final parts = splitInstructionLine(state);
-  assert(parts.length <
-      4); // TeroV is this really true? If all syntax parts exists => create a test case
+  final partsRaw = state.trim().split(" ");
+  // if there are multiple spaces then we get extra parts
+  final partsReal = partsRaw.where((p) => p.isNotBlank()).toList();
+  final parts = partsReal.map((p) => p.trim()).toList();
+  assert(parts.isNotEmpty);
+  assert(parts.length < 3);
 
-  // no label and first part is opcode
-  if (config.isOpcode(parts[0])) {
-    if (parts.length > 2) {
-      // TeroV might here is same thing?
-      throw AssemblerError(
-          'Failed to parse line as too many parts after opcode: $unmodifiedLine');
-    }
-    opcode = parts[0];
-    operand = parts.length == 2 ? parts[1] : null;
-    comment = parts.length == 3 ? parts[2] : comment;
+  final opcodeStr = parts[0];
+  final operandStr = parts.length == 2 ? parts[1] : null;
 
-    // first part is label and second part is opcode
-  } else if (parts.length > 1 && config.isOpcode(parts[1])) {
-    label = parts[0];
-    opcode = parts[1];
-    operand = parts.length == 3 ? parts[2] : null;
-    comment = parts.length == 4 ? parts[3] : comment;
-
-    // only label
-  } else {
-    // [0] could be label, and there is no opcode
-    if (parts.length > 1) {
-      throw AssemblerError(
-          'Failed to parse line as no opcode found and there is input after label: $unmodifiedLine');
-    }
-    label = parts[0]; // TeroV verify what is created based on this
+  if (!config.isOpcode(opcodeStr)) {
+    throw AssemblerError('Not known opcode on line: $unmodifiedLine');
   }
 
-  if (opcode == null) {
-    return AsmProgramLine(
-        lineNumber: lineNumber,
-        originalLine: unmodifiedLine,
-        statement: label != null
-            ? LabelStatement(label: label)
-            : EmptyStatement.empty());
-  }
-
-  Instruction instructionObj = config.getInstruction(opcode);
+  Instruction instructionObj = config.getInstruction(opcodeStr);
   Opcode opcodeObj;
   AddressingMode addressingMode;
   OperandValue operandValue;
 
-  if (operand != null) {
-    final (parsedOpcodeObj, parsedOperandValue, parsedAddressingMode) =
-        extractOperands(instructionObj, operand);
-    opcodeObj = parsedOpcodeObj;
-    operandValue = parsedOperandValue;
-    addressingMode = parsedAddressingMode;
+  if (operandStr != null) {
+    (opcodeObj, operandValue, addressingMode) =
+        extractOperandParts(instructionObj, operandStr);
   } else {
-    // no operands
+    // no operands, is that ok for instruction
+    xxx put this method elsewhere
     final opcodeObjs = instructionObj.opcodes
         .where((element) => element.bytes.length == 1)
         .toList();
@@ -106,52 +81,13 @@ AsmProgramLine parseStatementLine(final int lineNumber,
       comment: comment,
       statement: AssemblyInstruction(
         instructionSpec: instructionObj,
-        label: label,
+        label: label, // TeroV consider moving label on top level
         opcode: opcodeObj,
         operand: Operand(addressingMode: addressingMode, value: operandValue),
       ));
 }
 
-List<String> splitInstructionLine(String input) {
-  input = input.trim();
-  if (input.isEmpty) {
-    return [];
-  }
-
-  // TODO by quick look I don't follow why so many if statements?
-
-  final parts = <String>[];
-
-  var indexOfSpace = input.indexOf(' ');
-  if (indexOfSpace > -1) {
-    parts.add(input.substring(0, indexOfSpace).trim());
-    input = input.substring(indexOfSpace).trim();
-  } else {
-    parts.add(input);
-    return parts;
-  }
-
-  indexOfSpace = input.indexOf(' ');
-  if (indexOfSpace > -1) {
-    parts.add(input.substring(0, indexOfSpace).trim());
-    input = input.substring(indexOfSpace).trim();
-  } else {
-    parts.add(input);
-    return parts;
-  }
-
-  indexOfSpace = input.indexOf(' ');
-  if (indexOfSpace > -1) {
-    parts.add(input.substring(0, indexOfSpace).trim());
-    // final part is comment
-  } else {
-    parts.add(input);
-  }
-
-  return parts;
-}
-
-(Opcode, OperandValue, AddressingMode) extractOperands(
+(Opcode, OperandValue, AddressingMode) extractOperandParts(
     Instruction instruction, String input) {
   final (addressingMode, operandValue) = parseOperands(input);
 

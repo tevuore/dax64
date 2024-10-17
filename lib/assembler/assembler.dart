@@ -59,6 +59,12 @@ class Assembler {
   Map<String, AsmProgramLine> firstRoundCollectData(AsmProgram program) {
     final labels = <String, AsmProgramLine>{};
 
+    // collect labels and macros to hash maps for easy accessing
+    // NOTE: this loop is a bit extra, as then we in reality going through
+    // lines third times. However 80's memory is so limited that modern
+    // computers don't have any problems to handle it. Extra round makes
+    // code clearer as parsing can be divided own subfunctions.
+
     for (final block in program.blocks) {
       for (final line in block.lines) {
         try {
@@ -102,6 +108,8 @@ class Assembler {
   List<int> secondRoundAssemble(
       AsmProgram program, Map<String, AsmProgramLine> labels) {
     // TODO impl using labels
+
+    // TODO pass info about labels and macros, and memory address
 
     final bytes = <int>[];
     for (final block in program.blocks) {

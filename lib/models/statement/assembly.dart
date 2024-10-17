@@ -19,7 +19,7 @@ class AssemblyInstruction extends AssemblyStatement {
       operand; // TODO shouldn't every instruction have at least place for addressing mode?
 
   AssemblyInstruction({
-    required this.instructionSpec,
+    required this.instructionSpec, // TeroV rename this? non spec
     required this.opcode,
     this.operand,
     super.label,
