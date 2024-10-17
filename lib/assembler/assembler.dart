@@ -159,7 +159,6 @@ class Assembler {
         // operand value is string - it could be label or macro ref, but
         // that is not yet implemented for assembling output
 
-        // TODO why opcode has addressing mode as string? could it have as enum?
         // special case for relative addressing mode
         if (isRelativeJumpInstruction(instructionSpec) &&
             operand.addressingMode == AddressingMode.absolute) {
