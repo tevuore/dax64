@@ -24,11 +24,9 @@ AsmProgramLine parseStatementLine(final int lineNumber,
   Label? label;
   (state, label) = tryParsePrecedingLabel(state);
 
-  if (state.trim().isEmpty)
+  if (state.trim().isEmpty) {
     throw AssemblerError("No opcode detected on line: $unmodifiedLine");
-
-  String? opcode;
-  String? operand;
+  }
 
   // so it is instruction line, but what kind of?
 
@@ -61,16 +59,15 @@ AsmProgramLine parseStatementLine(final int lineNumber,
     (opcodeObj, operandValue, addressingMode) =
         extractOperandParts(instructionObj, operandStr);
   } else {
-    // no operands, is that ok for instruction
-    xxx put this method elsewhere
-    final opcodeObjs = instructionObj.opcodes
-        .where((element) => element.bytes.length == 1)
-        .toList();
-    if (opcodeObjs.isEmpty) {
+    // no operands, is that ok for this instruction
+    final implicitOpcode = instructionObj.getImplicitOpcode();
+
+    if (implicitOpcode == null) {
       throw AssemblerError(
-          'No unique implicit opcode found for instruction: ${instructionObj.instruction}');
+          'No implicit opcode found for instruction: ${instructionObj.instruction}');
     }
-    opcodeObj = opcodeObjs[0];
+
+    opcodeObj = implicitOpcode;
     operandValue = EmptyOperandValue();
     addressingMode = AddressingMode.implied;
   }

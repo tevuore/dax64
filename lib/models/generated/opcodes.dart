@@ -1,7 +1,5 @@
+import 'package:dax64/assembler/errors.dart';
 import 'package:meta/meta.dart';
-import 'package:quiver/core.dart';
-
-import 'index.dart';
 
 @immutable
 class Opcodes {
@@ -48,6 +46,23 @@ class Instruction {
   final String description;
   final Flags flags;
   final List<Opcode> opcodes;
+
+  Opcode? getImplicitOpcode() {
+    // i.e. no operand
+    // if just opcode exists then there should be only one
+    final opcodeObjs =
+        this.opcodes.where((element) => element.bytes.length == 1).toList();
+    if (opcodeObjs.isEmpty) {
+      return null;
+    }
+
+    if (opcodeObjs.length > 1) {
+      throw InternalAssemblerError(
+          "Multiple implicit opcodes for instruction: ${instruction}, ${opcodeObjs}");
+    }
+
+    return opcodeObjs.first;
+  }
 
   factory Instruction.fromJson(Map<String, dynamic> json) => Instruction(
       instruction: json['instruction'].toString(),
