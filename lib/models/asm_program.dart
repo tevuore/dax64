@@ -1,11 +1,19 @@
+import 'dart:collection';
+
 import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/models/statement/empty.dart';
+import 'package:dax64/models/statement/macro.dart';
 import 'package:dax64/models/statement/statement.dart';
+
+import '../assembler/assembler.dart';
 
 // TOOO how to implement as immutable?
 
 class AsmProgram {
   final List<AsmBlock> blocks = [];
+  final Map<LabelName, AsmProgramLine> labels = HashMap();
+  final Map<VariableName, MacroAssignment> variables = HashMap();
+  final Map<MacroName, MacroDefinition> macros = HashMap();
 }
 
 class AsmBlock {
