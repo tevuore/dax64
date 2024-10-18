@@ -5,7 +5,13 @@ class MacroStatement extends Statement {
 }
 
 class MacroDefinition extends MacroStatement {
-  // TODO impl
+  final String name;
+
+  MacroDefinition({
+    required this.name,
+  });
+
+// TODO impl
 }
 
 class MacroInvocation extends MacroStatement {
