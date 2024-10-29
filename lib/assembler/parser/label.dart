@@ -32,6 +32,7 @@ AsmProgramLine? tryParseLabelOnOwnLine(
       lineNumber: state.lineNumber,
       originalLine: state.line,
       comment: comment,
+      statementStr: remainingLine.trim(),
       statement: LabelStatement(label: label.dropLastChar()));
 }
 

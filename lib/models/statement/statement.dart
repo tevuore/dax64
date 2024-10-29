@@ -2,7 +2,7 @@ import 'package:dax64/assembler/errors.dart';
 
 class Statement {
   final bool shouldAssemble;
-  late final String? _label;
+  late final String? _label; // TeroV why on this level?
 
   // TODO should we have own type for label that prevents empty values
   Statement({required this.shouldAssemble, String? label}) {

@@ -17,7 +17,6 @@ AsmProgramLine? tryParseMacroAssignment(
 
   final m = assignmentRegex.firstMatch(remainingLine2);
   if (m == null) return null;
-
   final valueName = m.group(1);
   final value = m.group(2)!.trim();
 
@@ -25,5 +24,6 @@ AsmProgramLine? tryParseMacroAssignment(
       lineNumber: state.lineNumber,
       originalLine: state.line,
       comment: comment,
+      statementStr: remainingLine2,
       statement: MacroAssignment(name: valueName!, value: value));
 }

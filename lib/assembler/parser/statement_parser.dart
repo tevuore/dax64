@@ -76,6 +76,7 @@ AsmProgramLine parseStatementLine(final int lineNumber,
       lineNumber: lineNumber,
       originalLine: unmodifiedLine,
       comment: comment,
+      statementStr: state,
       statement: AssemblyInstruction(
         instructionSpec: instructionObj,
         label: label, // TeroV consider moving label on top level

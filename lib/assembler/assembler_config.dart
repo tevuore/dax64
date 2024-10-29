@@ -22,4 +22,10 @@ class AssemblerConfig {
     }
     return opcodeMap[opcode]!;
   }
+
+  // TODO TeroV real memory address take a look from as65t
+  // TODO this should be possible to override
+  // TODO if overriding then raises question this config should be separate
+  //      from opcode config?
+  int getDefaultStartingMemoryAddress() => 0x100;
 }

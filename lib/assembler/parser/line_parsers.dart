@@ -5,6 +5,7 @@ import 'package:dax64/assembler/parser/label.dart';
 import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/assembler/parser/statement_parser.dart';
 import 'package:dax64/models/asm_program.dart';
+import 'package:dax64/models/statement/assembly.dart';
 
 import 'assignment.dart';
 import 'data.dart';
@@ -33,7 +34,7 @@ typedef TryParser = AsmProgramLine? Function(
 
 // TODO a single parser could try to iterate to next line too... well then return type would be a list
 
-AsmProgramLine parseAsmProgramLine(
+Assembly parseNext(
     final lineNumber, final String line, final AssemblerConfig config) {
   final state = ParsingState(lineNumber, line);
 

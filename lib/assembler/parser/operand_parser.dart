@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import '../../models/statement/assembly.dart';
 import '../../models/statement/operand.dart';
 import '../addressing_modes.dart';
 import '../errors.dart';
@@ -12,64 +13,96 @@ import '../errors.dart';
   if (data == 'A') {
     return (AddressingMode.accumulator, EmptyOperandValue());
   }
-  var regex = RegExp(r'^#\$([0-9A-Fa-f]{1,2})$');
+  // TeroV if there is $ then we know it is hex value
+
+  var regex = RegExp(r'^#(\$?[0-9A-Za-z_]+)$');
   var match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.immediate, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.immediate,
+      buildValueRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\$([0-9A-Fa-f]{4})$');
+  regex = RegExp(r'^(\$?[0-9A-Fa-f]{1,2})$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.absolute, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.zeropage,
+      buildValueRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\$([0-9A-Fa-f]{4}),[xX]$');
+  regex = RegExp(r'^(\$?[0-9A-Fa-f]{1,2}),[xX]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.absoluteX, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.zeropageX,
+      buildValueRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\$([0-9A-Fa-f]{4}),[yY]$');
+  regex = RegExp(r'^(\$?[0-9A-Fa-f]{1,2}),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.absoluteY, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.zeropageY,
+      buildValueRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\(\$([0-9A-Fa-f]{4})\)$');
+  regex = RegExp(r'^\((\$?[0-9A-Za-z_]+),[xX]\)$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.indirect, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.indirectX,
+      buildValueRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\$([0-9A-Fa-f]{1,2})$');
+  regex = RegExp(r'^\((\$?[0-9A-Za-z_]+)\),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.zeropage, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.indirectY,
+      buildValueRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\$([0-9A-Fa-f]{1,2}),[xX]$');
+  regex = RegExp(r'^(\$?[0-9A-Za-z_]+)$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.zeropageX, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.absolute,
+      buildAddressRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\$([0-9A-Fa-f]{1,2}),[yY]$');
+  regex = RegExp(r'^(\$?[0-9A-Za-z_]+),[xX]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.zeropageY, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.absoluteX,
+      buildValueRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\(\$([0-9A-Fa-f]{1,2}),[xX]\)$');
+  regex = RegExp(r'^(\$?[0-9A-Za-z_]+),[yY]$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.indirectX, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.absoluteY,
+      buildAddressRefOperandValue(match.group(1)!)
+    );
   }
 
-  regex = RegExp(r'^\(\$([0-9A-Fa-f]{1,2})\),[yY]$');
+  regex = RegExp(r'^\((\$?[0-9A-Za-z_]+)\)$');
   match = regex.firstMatch(data);
   if (match != null) {
-    return (AddressingMode.indirectY, HexOperandValue.build(match.group(1)!));
+    return (
+      AddressingMode.indirect,
+      buildAddressRefOperandValue(match.group(1)!)
+    );
   }
 
   // TODO: missing X-Indexed Zero Page Indirect
@@ -80,7 +113,11 @@ import '../errors.dart';
 // TODO could we pass full operand?
 /// convert operand value to bytes
 /// TODO input is assumed to be hex value
-Uint8List parseOperandValue(AddressingMode addressingMode, OperandValue input) {
+Uint8List parseOperandValue(Operand operand) {
+  assert(operand.isResolved());
+  final addressingMode = operand.getAddressingMode();
+  final input = operand.getValue();
+
   switch (addressingMode) {
     case AddressingMode.implied:
     case AddressingMode.accumulator:
@@ -115,4 +152,29 @@ Uint8List parseOperandValue(AddressingMode addressingMode, OperandValue input) {
     case AddressingMode.relative:
       throw AssemblerError('Relative addressing mode not yet implemented');
   }
+}
+
+OperandValue buildAddressRefOperandValue(String rawValue) {
+  // TeroV add validation?
+
+  final hexValue = HexOperandValue.tryParse(rawValue);
+  if (hexValue != null) return hexValue;
+
+  // it must be label or variable ref, we can't distinguish which one
+
+  return RefOperandValue.build(rawValue);
+}
+
+OperandValue buildValueRefOperandValue(String rawValue) {
+  // TeroV add validation, value ref needs to refer to two bytes
+  //       so value itself if directly defined can't be over two bytes length
+
+  if (rawValue.startsWith(r'$')) {
+    final hexValue = HexOperandValue.tryParse(rawValue);
+    if (hexValue != null) return hexValue;
+    throw AssemblerError('Invalid hex value: $rawValue');
+  }
+
+  // it must be zero page label or variable ref, we can't distinguish which one
+  return RefOperandValue.build(rawValue);
 }

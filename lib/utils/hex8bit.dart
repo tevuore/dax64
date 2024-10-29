@@ -28,13 +28,13 @@ Uint8List parseHex(String hex) {
 
   if (plainValue.length > 2) {
     return Uint8List.fromList([
-      parse8BitHex(hex.substring(0, 2)),
-      parse8BitHex(hex.substring(2, 4))
+      parse8BitHex(plainValue.substring(0, 2)),
+      parse8BitHex(plainValue.substring(2, 4))
     ].reversed.toList());
   }
   if (plainValue.length < 3) {
     return Uint8List.fromList([
-      parse8BitHex(hex),
+      parse8BitHex(plainValue),
     ].reversed.toList());
   }
 

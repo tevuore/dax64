@@ -10,7 +10,7 @@ abstract class OperandValue {
 
   Uint8List toBytes();
 
-  String getValue();
+  String getRawValue();
 
   int getIntValue();
 
@@ -27,6 +27,7 @@ abstract class OperandValue {
   }
 }
 
+// TeroV should operand related classes be under operand file?
 class EmptyOperandValue extends OperandValue {
   @override
   bool isEmpty() => true;
@@ -40,7 +41,7 @@ class EmptyOperandValue extends OperandValue {
   }
 
   @override
-  String getValue() {
+  String getRawValue() {
     return '';
   }
 
@@ -54,10 +55,19 @@ class HexOperandValue extends OperandValue {
   final int _value;
   final Uint8List _bytes;
 
-  HexOperandValue.build(String value)
-      : _rawValue = value,
-        _value = parseAsmHex(value),
-        _bytes = parseHex(value);
+  HexOperandValue(this._rawValue, this._value, this._bytes);
+
+  factory HexOperandValue.build(String value) {
+    return HexOperandValue(value, parseAsmHex(value), parseHex(value));
+  }
+
+  static HexOperandValue? tryParse(String value) {
+    try {
+      return HexOperandValue.build(value);
+    } on FormatException catch (_) {
+      return null;
+    }
+  }
 
   @override
   bool isEmpty() => false;
@@ -69,8 +79,38 @@ class HexOperandValue extends OperandValue {
   Uint8List toBytes() => _bytes;
 
   @override
-  String getValue() => _rawValue;
+  String getRawValue() => _rawValue;
 
   @override
   int getIntValue() => _value;
+}
+
+class RefOperandValue extends OperandValue {
+  final String _rawValue;
+
+  RefOperandValue(this._rawValue);
+
+  factory RefOperandValue.build(String value) {
+    // value is either ref to variable or label
+
+    // TeroV add some kind label and/or variable validation
+
+    // FUTURE: we would need to support simple operations, like + and -
+    return RefOperandValue(value);
+  }
+
+  @override
+  bool isEmpty() => false;
+
+  @override
+  bool isHexValue() => false;
+
+  @override
+  Uint8List toBytes() => throw NotImplementedAssemblerError('ref value impl');
+
+  @override
+  String getRawValue() => _rawValue;
+
+  @override
+  int getIntValue() => throw NotImplementedAssemblerError('ref value impl');
 }

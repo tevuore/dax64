@@ -47,6 +47,7 @@ class Instruction {
   final Flags flags;
   final List<Opcode> opcodes;
 
+  // TeroV how this is retained for generated code?
   Opcode? getImplicitOpcode() {
     // i.e. no operand
     // if just opcode exists then there should be only one

@@ -4,6 +4,7 @@ import 'package:dax64/models/asm_program.dart';
 
 import '../../models/statement/macro.dart';
 
+// TeroV could be just func
 class Parser {
   final AssemblerConfig config;
 
@@ -14,12 +15,12 @@ class Parser {
 
     // currently there is just single block, but in future there could be
     // several separate memory areas
-    final block = AsmBlock();
+    final block = AsmBlock.withDefaultMemoryAddress();
     program.blocks.add(block);
     var lineNumber = 1;
     // TODO we could have windows line feeds too
     for (final line in input.split('\n')) {
-      final programLine = parseLine(lineNumber, line);
+      final assembly = parseNext(lineNumber, line, config);
 
       // TODO not sure why label can't be null (or Option)
       if (programLine.statement.hasLabel()) {
@@ -33,14 +34,10 @@ class Parser {
           program.macros[macro.name] = macro;
         }
       }
-      block.lines.add(programLine);
+      block.assemblies.add(programLine);
       lineNumber++;
     }
 
     return program;
-  }
-
-  AsmProgramLine parseLine(final int lineNumber, final String unmodifiedLine) {
-    return parseAsmProgramLine(lineNumber, unmodifiedLine, config);
   }
 }
