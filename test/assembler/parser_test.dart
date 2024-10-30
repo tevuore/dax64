@@ -27,7 +27,8 @@ void main() {
     RTS            ; Return from Subroutine
     ''';
 
-    final lines = parser.parse(input).blocks[0].lines;
+    final program = parser.parse(input);
+    final lines = takeLines(program);
     expect(lines.length, equals(9)); // last empty line included
   });
 
@@ -98,8 +99,8 @@ void main() {
 
     final program = parser.parse(input);
     // empty lines are included
-    expect(program.blocks.length, equals(1));
-    expect(program.blocks[0].lines.length, equals(1));
+    expect(program.files[0].blocks.length, equals(1));
+    expect(program.files[0].blocks[0].assemblies.length, equals(1));
   });
 }
 

@@ -47,4 +47,49 @@ void main() {
     // all after ';' char
     expect(line.comment, equals('Loop starts here'));
   });
+
+  test('should parse statement with label ref to earlier def', () async {
+    final input = r'''
+    DATA:           .BYTE $FF
+    MAIN:           LDY #$00
+                    STA $DATA,y
+    ''';
+
+    final program = parser.parse(input);
+    final lines = takeLines(program);
+    expect(lines.length, equals(3));
+
+    // take instruction that refers to label
+    final instruction = toAssemblyInstruction(lines[2]);
+
+    expect(instruction.hasLabel(), false);
+    expect(instruction.instructionSpec.instruction, equals('STA'));
+    expect(instruction.operand!.value.isEmpty(), false);
+    expect(instruction.operand!.value.getRawValue(), 'DATA');
+  });
+
+  test('should parse statement with label ref to later def', () async {
+    // in white box testing, knowing how parsing is implemented it shouldn't
+    // matter is label defined before or after. But to have a test for future
+    // when more tests and refactoring.
+
+    final input = r'''
+    MAIN:           LDY #$00
+                    JMP $JUMP
+                    TYA
+    JUMP:           LDY #$01
+    ''';
+
+    final program = parser.parse(input);
+    final lines = takeLines(program);
+    expect(lines.length, equals(4));
+
+    // take instruction that refers to label
+    final instruction = toAssemblyInstruction(lines[2]);
+
+    expect(instruction.hasLabel(), false);
+    expect(instruction.instructionSpec.instruction, equals('JMP'));
+    expect(instruction.operand!.value.isEmpty(), false);
+    expect(instruction.operand!.value.getRawValue(), 'JUMP');
+  });
 }

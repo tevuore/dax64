@@ -1,11 +1,12 @@
 import 'package:dax64/assembler/errors.dart';
 
-class Statement {
-  final bool shouldAssemble;
-  late final String? _label; // TeroV why on this level?
+abstract class Statement {
+  // after comment and trimming, real payload of line what is left
+  late final String statementStr;
+  late final String? _label;
 
-  // TODO should we have own type for label that prevents empty values
-  Statement({required this.shouldAssemble, String? label}) {
+  // TODO should we have own type for label that prevents empty values => we could have this class abstract
+  Statement({required this.statementStr, String? label}) {
     if (label != null && label.trim().isEmpty) {
       throw InternalAssemblerError('Label should not be blank');
     }
@@ -20,4 +21,8 @@ class Statement {
   }
 
   bool hasLabel() => _label != null;
+
+  bool isResolved();
+
+  bool get shouldAssemble;
 }

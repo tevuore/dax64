@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import '../../assembler/assembly_context.dart';
 import '../../assembler/errors.dart';
 import '../../utils/hex8bit.dart';
 
@@ -27,7 +28,7 @@ abstract class OperandValue {
   }
 }
 
-// TeroV should operand related classes be under operand file?
+
 class EmptyOperandValue extends OperandValue {
   @override
   bool isEmpty() => true;
@@ -85,6 +86,44 @@ class HexOperandValue extends OperandValue {
   int getIntValue() => _value;
 }
 
+class IntegerOperandValue extends OperandValue {
+  final String _rawValue;
+  final int _value;
+  final Uint8List _bytes;
+
+  IntegerOperandValue(this._rawValue, this._value, this._bytes);
+
+  factory IntegerOperandValue.build(int value) {
+    Uint8List bytes;
+    if (value <= 0xFF) {
+      bytes = Uint8List.fromList([value]);
+    } if (value <= 0xFFFF) {
+      bytes = Uint8List.fromList([value | 0xFF, value | 0xFF00]);
+    } else {
+      throw AssemblerError("Invalid operand value: $value");
+    }
+
+    return IntegerOperandValue(value.toString(), value, bytes);
+  }
+
+  @override
+  bool isEmpty() => false;
+
+  // TeroV what is meaning of this?
+  @override
+  bool isHexValue() => false;
+
+  @override
+  Uint8List toBytes() => _bytes;
+
+  @override
+  String getRawValue() => _rawValue;
+
+  @override
+  int getIntValue() => _value;
+}
+
+// TeroV eventually when we have LateAssembly, do we need to extend OperandValue as parent class functions really don't make difference...
 class RefOperandValue extends OperandValue {
   final String _rawValue;
 
@@ -93,9 +132,10 @@ class RefOperandValue extends OperandValue {
   factory RefOperandValue.build(String value) {
     // value is either ref to variable or label
 
-    // TeroV add some kind label and/or variable validation
+    // TBD add some kind label and/or variable validation
 
-    // FUTURE: we would need to support simple operations, like + and -
+    // TBD we would need to support simple operations, like + and -,
+    // or < and > to select upper and higher byte from variable
     return RefOperandValue(value);
   }
 
@@ -113,4 +153,24 @@ class RefOperandValue extends OperandValue {
 
   @override
   int getIntValue() => throw NotImplementedAssemblerError('ref value impl');
+
+  OperandValue resolve(AssemblyContext context) {
+    final label = context.label(_rawValue);
+    if (label != null) {
+      // there exists such label, but it might be that is memory address
+      // is not yet known
+      if (label.memoryAddress != null) {
+        return IntegerOperandValue.build(label.memoryAddress!);
+      } else {
+        xxx not able to resolve
+
+        xxx return unresolved label => how resolve that later, i.e. delayed label
+      }
+    }
+
+    final variable = context.variable(_rawValue);
+    if (variable != null) {
+      return IntegerOperandValue.build(variable.value)
+    }
+  }
 }

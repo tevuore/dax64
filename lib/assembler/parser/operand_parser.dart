@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import '../../models/statement/assembly.dart';
 import '../../models/statement/operand.dart';
 import '../addressing_modes.dart';
+import '../assembly.dart';
 import '../errors.dart';
 
 (AddressingMode, OperandValue) parseOperands(String input) {

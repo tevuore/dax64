@@ -5,7 +5,6 @@ import 'package:dax64/assembler/parser/label.dart';
 import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/assembler/parser/statement_parser.dart';
 import 'package:dax64/models/asm_program.dart';
-import 'package:dax64/models/statement/assembly.dart';
 
 import 'assignment.dart';
 import 'data.dart';
@@ -34,9 +33,9 @@ typedef TryParser = AsmProgramLine? Function(
 
 // TODO a single parser could try to iterate to next line too... well then return type would be a list
 
-Assembly parseNext(
-    final lineNumber, final String line, final AssemblerConfig config) {
-  final state = ParsingState(lineNumber, line);
+AsmProgramLine parseNext(final SourceLine line, final AssemblerConfig config) {
+  // TODO does it make sense to have SourceLine and ParsingState with similar structure?
+  final state = ParsingState(line);
 
   for (final parser in lineParserPipeline) {
     final programLine = parser(state, config);
@@ -45,23 +44,23 @@ Assembly parseNext(
     }
   }
 
-  throw InternalAssemblerError("No matching line parser found");
+  throw InternalAssemblerError("No matching line parser found", line);
 }
 
 AsmProgramLine? tryParseEmptyLine(ParsingState state, _) {
   return state.trimmedLine.isEmpty
-      ? AsmProgramLine.withoutStatementFromState(state)
+      ? AsmProgramLine.withoutStatement(line: state.line)
       : null;
 }
 
 AsmProgramLine? tryParseStatement(
     ParsingState state, final AssemblerConfig config) {
-  return parseStatementLine(state.lineNumber, state.line, config);
+  return parseStatementLine(state.line.lineNumber, state.line.raw, config);
 }
 
 /// This processor should be last in the pipeline and its purpose is just to
 /// raise error if no other parsers matched a line.
 AsmProgramLine? noMatchingParser(ParsingState state, _) {
   throw InternalAssemblerError(
-      'No matching line processor for line: ${state.lineNumber}: ${state.line}');
+      'No matching line processor for line', state.line);
 }

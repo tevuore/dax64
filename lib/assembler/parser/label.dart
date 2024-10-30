@@ -21,7 +21,7 @@ void validateLabel(String? label) {
 AsmProgramLine? tryParseLabelOnOwnLine(
     ParsingState state, final AssemblerConfig config) {
   // there could be a trailing comment
-  var (remainingLine, comment) = tryParseTrailingComment(state.line);
+  var (remainingLine, comment) = tryParseTrailingComment(state.line.raw);
 
   if (!remainingLine.trim().endsWith(':')) return null;
 
@@ -29,11 +29,9 @@ AsmProgramLine? tryParseLabelOnOwnLine(
   validateLabel(label);
 
   return AsmProgramLine(
-      lineNumber: state.lineNumber,
-      originalLine: state.line,
+      line: state.line,
       comment: comment,
-      statementStr: remainingLine.trim(),
-      statement: LabelStatement(label: label.dropLastChar()));
+      statement: LabelStatement.build(label));
 }
 
 (String remainingLine, Label? label) tryParsePrecedingLabel(String line) {

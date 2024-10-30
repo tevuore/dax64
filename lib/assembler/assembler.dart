@@ -10,7 +10,7 @@ import 'package:dax64/models/asm_program.dart';
 import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/utils/hex8bit.dart';
 
-import '../models/statement/assembly.dart';
+import 'assembly.dart';
 import 'assembly_context.dart';
 
 class Assembler {

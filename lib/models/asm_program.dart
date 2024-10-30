@@ -1,7 +1,7 @@
 import 'dart:collection';
 
-import 'package:dax64/assembler/parser/parser_state.dart';
-import 'package:dax64/models/statement/assembly.dart';
+import 'package:dax64/assembler/assembly.dart';
+import 'package:dax64/assembler/errors.dart';
 import 'package:dax64/models/statement/empty.dart';
 import 'package:dax64/models/statement/macro.dart';
 import 'package:dax64/models/statement/statement.dart';
@@ -19,7 +19,10 @@ class AsmProgram {
 
 /// mutable
 class AsmFile {
+  final String fileName;
   final List<AsmBlock> blocks = [];
+
+  AsmFile({required this.fileName});
 }
 
 /// Asm block is separated by defined target memory address, or unknown
@@ -65,34 +68,17 @@ class AsmBlock {
 
 @immutable
 class AsmProgramLine {
-  final int lineNumber;
-  final String originalLine;
+  final SourceLine line;
   final String? comment;
-
-  // after comment and trimming, real payload of line what is left
-  late final String? statementStr;
   final Statement statement;
 
-  AsmProgramLine(
-      {required this.lineNumber,
-      required this.originalLine,
-      required this.statementStr,
-      required this.statement,
-      this.comment});
+  AsmProgramLine({required this.line, required this.statement, this.comment});
 
-  AsmProgramLine.withoutStatement(
-      {required this.lineNumber, required this.originalLine, String? comment_})
-      : statement = EmptyStatement.empty(),
-        comment = comment_ {
-    if (comment_ != null) {
-      statementStr = originalLine.replaceFirst(comment_, '').trim();
-    } else {
-      statementStr = originalLine.trim();
-    }
+  factory AsmProgramLine.withoutStatement(
+      {required SourceLine line, String? comment}) {
+    return AsmProgramLine(
+        line: line, statement: EmptyStatement.empty(), comment: comment);
   }
 
-  AsmProgramLine.withoutStatementFromState(ParsingState state, {this.comment})
-      : lineNumber = state.lineNumber,
-        originalLine = state.line,
-        statement = EmptyStatement.empty();
+  bool isResolved() => statement.isResolved();
 }

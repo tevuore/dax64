@@ -1,7 +1,8 @@
+import '../errors.dart';
+
 class ParsingState {
-  final int lineNumber;
-  final String line;
+  final SourceLine line;
   final String trimmedLine;
 
-  ParsingState(this.lineNumber, this.line) : trimmedLine = line.trim();
+  ParsingState(this.line) : trimmedLine = line.raw.trim();
 }

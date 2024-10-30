@@ -2,9 +2,9 @@ import 'package:dax64/assembler/parser/label.dart';
 import 'package:dax64/assembler/parser/parser_state.dart';
 
 import '../../models/asm_program.dart';
-import '../../models/statement/assembly.dart';
 import '../../models/statement/macro.dart';
 import '../assembler_config.dart';
+import '../assembly.dart';
 import 'comment.dart';
 
 // match to pattern
@@ -30,9 +30,7 @@ AsmProgramLine? tryParseDataLine(ParsingState state, final AssemblerConfig _) {
   final values = valueList.split(',').map((e) => e.trim()).toList();
 
   return AsmProgramLine(
-      lineNumber: state.lineNumber,
-      originalLine: state.line,
+      line: state.line,
       comment: comment,
-      statementStr: remainingLine2,
       statement: AssemblyData(label: label, type: dataType, values: values));
 }

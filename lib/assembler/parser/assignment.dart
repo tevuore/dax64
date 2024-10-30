@@ -17,13 +17,12 @@ AsmProgramLine? tryParseMacroAssignment(
 
   final m = assignmentRegex.firstMatch(remainingLine2);
   if (m == null) return null;
-  final valueName = m.group(1);
+  final valueName = m.group(1)!.trim();
   final value = m.group(2)!.trim();
 
   return AsmProgramLine(
-      lineNumber: state.lineNumber,
-      originalLine: state.line,
+      line: state.line,
       comment: comment,
-      statementStr: remainingLine2,
-      statement: MacroAssignment(name: valueName!, value: value));
+      statement:
+          MacroAssignment.build(valueName, value, remainingLine2.trim()));
 }

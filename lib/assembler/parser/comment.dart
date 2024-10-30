@@ -11,16 +11,14 @@ AsmProgramLine? tryParseCommentLine(
   if (!state.trimmedLine.startsWith(';')) return null;
 
   final regex = RegExp(r'^[ \t]*;(.*)$');
-  final match = regex.firstMatch(state.line);
+  final match = regex.firstMatch(state.line.raw);
   if (match != null) {
     final comment = match.group(1);
-    return AsmProgramLine.withoutStatementFromState(state,
-        comment: comment!.trim());
+    return AsmProgramLine.withoutStatement(
+        line: state.line, comment: comment!.trim());
   }
 
-  throw AssemblerError(
-    'Failed to parse comment from line: ${state.lineNumber}: ${state.line}',
-  );
+  throw AssemblerError('Failed to parse comment from line', state.line);
 }
 
 (String remainingLine, Comment? comment) tryParseTrailingComment(String line) {

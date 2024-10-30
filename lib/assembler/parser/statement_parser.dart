@@ -7,8 +7,8 @@ import 'package:dax64/models/generated/index.dart';
 import 'package:dax64/utils/string_extensions.dart';
 
 import '../../models/asm_program.dart';
-import '../../models/statement/assembly.dart';
 import '../../models/statement/operand.dart';
+import '../assembly.dart';
 import 'comment.dart';
 import 'operand_parser.dart';
 
@@ -73,10 +73,9 @@ AsmProgramLine parseStatementLine(final int lineNumber,
   }
 
   return AsmProgramLine(
-      lineNumber: lineNumber,
-      originalLine: unmodifiedLine,
+      // TBD move to use SourceLine
+      line: SourceLine(lineNumber, unmodifiedLine),
       comment: comment,
-      statementStr: state,
       statement: AssemblyInstruction(
         instructionSpec: instructionObj,
         label: label, // TeroV consider moving label on top level
