@@ -56,55 +56,82 @@ AsmProgramLine parseStatementLine(final int lineNumber,
   OperandValue operandValue;
 
   if (operandStr != null) {
-    (opcodeObj, operandValue, addressingMode) =
-        extractOperandParts(instructionObj, operandStr);
-  } else {
-    // no operands, is that ok for this instruction
-    final implicitOpcode = instructionObj.getImplicitOpcode();
+    // statement can be either fully resolved, or has refs that require
+    // resolving later when referenced values are known
+    final statement = buildAssemblyStatement(instructionObj, operandStr);
 
-    if (implicitOpcode == null) {
-      throw AssemblerError(
-          'No implicit opcode found for instruction: ${instructionObj.instruction}');
-    }
-
-    opcodeObj = implicitOpcode;
-    operandValue = EmptyOperandValue();
-    addressingMode = AddressingMode.implied;
-  }
-
-  return AsmProgramLine(
-      // TBD move to use SourceLine
+    return AsmProgramLine(
       line: SourceLine(lineNumber, unmodifiedLine),
       comment: comment,
-      statement: AssemblyInstruction(
+      statement: statement,
+    );
+  }
+
+  // no operands, is that ok for this instruction
+  final implicitOpcode = instructionObj.getImplicitOpcode();
+
+  if (implicitOpcode == null) {
+    throw AssemblerError(
+        'No implicit opcode found for instruction: ${instructionObj.instruction}');
+  }
+
+  opcodeObj = implicitOpcode;
+  operandValue = EmptyOperandValue();
+  addressingMode = AddressingMode.implied;
+
+  return AsmProgramLine(
+      line: SourceLine(lineNumber, unmodifiedLine),
+      comment: comment,
+      statement: ResolvedAssemblyInstruction(
+        statementStr: state,
         instructionSpec: instructionObj,
-        label: label, // TeroV consider moving label on top level
+        label: label,
+        // TeroV consider moving label on top level
         opcode: opcodeObj,
-        operand: Operand(addressingMode: addressingMode, value: operandValue),
+        operand: ResolvedOperand(
+            addressingMode: addressingMode, value: operandValue, rawValue: ''),
       ));
 }
 
-(Opcode, OperandValue, AddressingMode) extractOperandParts(
+AssemblyStatement buildAssemblyStatement(
     Instruction instruction, String input) {
   final (addressingMode, operandValue) = parseOperands(input);
 
-  // special case for relative addressing mode
-  if (isRelativeJumpInstruction(instruction) &&
-      addressingMode == AddressingMode.absolute) {
-    // opcode json had multiple opcodes for relative addressing mode, one per used bit
-    throw NotImplementedAssemblerError(
-        'Relative addressing mode not implemented for instruction: ${instruction.instruction}');
+  if (operandValue.isRefValue()) {
+    final opcode = instruction.getOpcode(addressingMode);
+    if (opcode == null) {
+      throw AssemblerError(
+          'No opcode found for instruction ${instruction.instruction} for addressing mode $addressingMode');
+    }
+
+    final operand = ResolvedOperand(
+        addressingMode: addressingMode, value: operandValue, rawValue: input);
+
+    // special case for relative addressing mode
+    // TeroV remember to handle this also in late resolved!
+    if (instruction.hasRelativeJumpInstruction(instruction) &&
+        addressingMode == AddressingMode.absolute) {
+      // opcode json had multiple opcodes for relative addressing mode, one per used bit
+      throw NotImplementedAssemblerError(
+          'Relative addressing mode not implemented for instruction: ${instruction.instruction}');
+    }
+
+    return ResolvedAssemblyInstruction(
+        statementStr: input,
+        instructionSpec: instruction,
+        opcode: opcode,
+        operand: operand);
   }
 
-  return (
-    instruction.opcodes.firstWhere((element) =>
-        areSameAddressingModes(element.addressMode, addressingMode)),
-    operandValue,
-    addressingMode,
-  );
-}
+  // now assuming we are dealing with operand value whose value is not known
+  // at this point. This means we can't resolve opcode as operand value affects
+  // by defining is it referring to zero page or not.
 
-bool isRelativeJumpInstruction(Instruction instruction) {
-  return instruction.opcodes
-      .every((element) => element.addressMode.endsWith("Rela"));
+  final operand = LateOperand(
+      addressingMode: addressingMode,
+      refOperandValue: operandValue as RefOperandValue,
+      rawValue: input);
+
+  return LateAssemblyInstruction(
+      statementStr: input, instructionSpec: instruction, operand: operand);
 }

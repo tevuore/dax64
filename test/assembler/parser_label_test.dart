@@ -60,11 +60,11 @@ void main() {
     expect(lines.length, equals(3));
 
     // take instruction that refers to label
-    final instruction = toAssemblyInstruction(lines[2]);
+    final instruction = toResolvedAssemblyInstruction(lines[2]);
 
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('STA'));
-    expect(instruction.operand!.value.isEmpty(), false);
+    expect(instruction.operand.value.isEmpty(), false);
     expect(instruction.operand!.value.getRawValue(), 'DATA');
   });
 
@@ -85,7 +85,7 @@ void main() {
     expect(lines.length, equals(4));
 
     // take instruction that refers to label
-    final instruction = toAssemblyInstruction(lines[2]);
+    final instruction = toResolvedAssemblyInstruction(lines[2]);
 
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('JMP'));

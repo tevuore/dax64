@@ -65,6 +65,18 @@ class Instruction {
     return opcodeObjs.first;
   }
 
+  // TeroV how this is retained for generated code?
+  Opcode? getOpcode(AddressingMode addressingMode) {
+    return opcodes.firstWhere((element) =>
+        areSameAddressingModes(element.addressMode, addressingMode))
+  }
+
+  // TeroV how this is retained for generated code?
+  bool hasRelativeJumpInstruction(Instruction instruction) {
+    return instruction.opcodes
+        .every((element) => element.addressMode.endsWith("Rela"));
+  }
+
   factory Instruction.fromJson(Map<String, dynamic> json) => Instruction(
       instruction: json['instruction'].toString(),
       description: json['description'].toString(),

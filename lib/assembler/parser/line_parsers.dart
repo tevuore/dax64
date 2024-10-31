@@ -6,6 +6,7 @@ import 'package:dax64/assembler/parser/parser_state.dart';
 import 'package:dax64/assembler/parser/statement_parser.dart';
 import 'package:dax64/models/asm_program.dart';
 
+import '../assembly.dart';
 import 'assignment.dart';
 import 'data.dart';
 
@@ -31,16 +32,24 @@ final List<TryParser> lineParserPipeline = [
 typedef TryParser = AsmProgramLine? Function(
     ParsingState state, AssemblerConfig config);
 
-// TODO a single parser could try to iterate to next line too... well then return type would be a list
+/// at assembly level we would handle label blocks and macros
+/// i.e. those that are build from multiple program lines
+Assembly parseNext(final SourceLine line, final AssemblerConfig config) {
+  // TBD at this point we use just that there is one program file per assembly
 
-AsmProgramLine parseNext(final SourceLine line, final AssemblerConfig config) {
   // TODO does it make sense to have SourceLine and ParsingState with similar structure?
   final state = ParsingState(line);
 
   for (final parser in lineParserPipeline) {
     final programLine = parser(state, config);
     if (programLine != null) {
-      return programLine;
+      if (programLine.statement.isResolved()) {
+        // TBD uses now ref to map, not safe usage
+        return ResolvedAssembly([programLine], programLine.statement.defs());
+      }
+
+      return LateAssembly([programLine], programLine.statement.defs(),
+          programLine.statement.refs());
     }
   }
 

@@ -32,5 +32,9 @@ AsmProgramLine? tryParseDataLine(ParsingState state, final AssemblerConfig _) {
   return AsmProgramLine(
       line: state.line,
       comment: comment,
-      statement: AssemblyData(label: label, type: dataType, values: values));
+      statement: AssemblyData(
+          label: label,
+          type: dataType,
+          values: values,
+          statementStr: remainingLine2));
 }

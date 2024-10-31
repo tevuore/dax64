@@ -9,12 +9,15 @@ abstract class OperandValue {
 
   bool isHexValue();
 
+  bool isRefValue();
+
   Uint8List toBytes();
 
   String getRawValue();
 
   int getIntValue();
 
+  // xxx a bit misleading as no integer not late
   static build(String? value) {
     if (value == null || value.trim().isEmpty) {
       return EmptyOperandValue();
@@ -35,6 +38,9 @@ class EmptyOperandValue extends OperandValue {
 
   @override
   bool isHexValue() => false;
+
+  @override
+  bool isRefValue() => false;
 
   @override
   Uint8List toBytes() {
@@ -77,6 +83,9 @@ class HexOperandValue extends OperandValue {
   bool isHexValue() => true;
 
   @override
+  bool isRefValue() => false;
+
+  @override
   Uint8List toBytes() => _bytes;
 
   @override
@@ -106,12 +115,27 @@ class IntegerOperandValue extends OperandValue {
     return IntegerOperandValue(value.toString(), value, bytes);
   }
 
+  static IntegerOperandValue? tryParse(String value) {
+    try {
+      var intValue = int.parse(value);
+      if (intValue < 0 || intValue > 0xFF) {
+        throw AssemblerError('Integer operand value is not in valid range of 0x0 - 0xFFF: $value');
+      }
+      return IntegerOperandValue.build(intValue);
+    } on FormatException catch (_) {
+      return null;
+    }
+  }
+
   @override
   bool isEmpty() => false;
 
   // TeroV what is meaning of this?
   @override
   bool isHexValue() => false;
+
+  @override
+  bool isRefValue() => false;
 
   @override
   Uint8List toBytes() => _bytes;
@@ -142,17 +166,23 @@ class RefOperandValue extends OperandValue {
   @override
   bool isEmpty() => false;
 
+  // TeroV who uses?
   @override
   bool isHexValue() => false;
 
   @override
-  Uint8List toBytes() => throw NotImplementedAssemblerError('ref value impl');
+  bool isRefValue() => true;
+
+  @override
+  Uint8List toBytes() => throw InternalAssemblerError('RefOperandValue not resolved');
 
   @override
   String getRawValue() => _rawValue;
 
   @override
-  int getIntValue() => throw NotImplementedAssemblerError('ref value impl');
+  int getIntValue() => throw InternalAssemblerError('RefOperandValue not resolved');
+
+
 
   OperandValue resolve(AssemblyContext context) {
     final label = context.label(_rawValue);

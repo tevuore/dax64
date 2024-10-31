@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dax64/assembler/errors.dart';
 import 'package:dax64/models/statement/statement.dart';
 import 'package:dax64/utils/hex8bit.dart';
@@ -12,6 +14,13 @@ class MacroStatement extends Statement {
   // TeroV impl
   @override
   bool isResolved() => false;
+
+  // TBD macro is not yet implemented
+  @override
+  Map<String, dynamic> defs() => HashMap();
+
+  @override
+  Map<String, dynamic> refs() => HashMap();
 }
 
 @immutable
@@ -83,6 +92,16 @@ class MacroAssignment extends MacroStatement {
         value: value,
         statementStr: statementStr);
   }
+
+  @override
+  Map<String, dynamic> defs() {
+    final map = HashMap<String, dynamic>();
+    map[name] = this;
+    return map;
+  }
+
+  @override
+  Map<String, dynamic> refs() => HashMap();
 }
 
 enum MacroValueType {

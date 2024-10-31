@@ -29,24 +29,38 @@ class Parser {
       final sourceLine = SourceLine(lineNumber, line);
       final assembly = parseNext(sourceLine, config);
 
-      // TODO not sure why label can't be null (or Option)
-      if (programLine.statement.hasLabel()) {
-        final label = programLine.statement.label;
-        if (program.labels.containsKey(label)) {
-          throw AssemblerError("Label '$label' defined here twice", sourceLine);
-        }
-        program.labels[programLine.statement.label] = programLine;
+      for (final key in assembly.defs.keys) {
+        final value = assembly.defs[key];
 
-        if (programLine.statement is MacroAssignment) {
-          final assignment = programLine.statement as MacroAssignment;
-          program.variables[assignment.name] = assignment;
-        } else if (programLine.statement is MacroDefinition) {
-          final macro = programLine.statement as MacroDefinition;
-          program.macros[macro.name] = macro;
+        switch (value) {
+          case MacroAssignment _:
+            if (program.variables.containsKey(key)) {
+              // TBD any chance to get any line number
+              throw AssemblerError("Variable '$key' defined twice");
+            }
+            program.variables[key] = value;
+            break;
+
+          case MacroDefinition _:
+            if (program.macros.containsKey(key)) {
+              // TBD any chance to get any line number
+              throw AssemblerError("Macro '$key' defined twice");
+            }
+            program.macros[key] = value;
+            break;
+
+          default:
+            // it must be label
+            if (program.labels.containsKey(key)) {
+              // TBD any chance to get any line number
+              throw AssemblerError("Label '$key' defined twice");
+            }
+            // TeroV does this value has any meanings
+            program.labels[key] = assembly.programLines[0];
         }
       }
-      block.assemblies.add(programLine);
-      lineNumber++;
+      block.assemblies.add(assembly);
+      lineNumber += assembly.getLineCount();
     }
 
     return program;

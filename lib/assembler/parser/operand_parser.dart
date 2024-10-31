@@ -13,7 +13,6 @@ import '../errors.dart';
   if (data == 'A') {
     return (AddressingMode.accumulator, EmptyOperandValue());
   }
-  // TeroV if there is $ then we know it is hex value
 
   var regex = RegExp(r'^#(\$?[0-9A-Za-z_]+)$');
   var match = regex.firstMatch(data);
@@ -160,6 +159,9 @@ OperandValue buildAddressRefOperandValue(String rawValue) {
   final hexValue = HexOperandValue.tryParse(rawValue);
   if (hexValue != null) return hexValue;
 
+  final integerValue = IntegerOperandValue.tryParse(rawValue);
+  if (integerValue != null) return integerValue;
+
   // it must be label or variable ref, we can't distinguish which one
 
   return RefOperandValue.build(rawValue);
@@ -171,6 +173,7 @@ OperandValue buildValueRefOperandValue(String rawValue) {
 
   if (rawValue.startsWith(r'$')) {
     final hexValue = HexOperandValue.tryParse(rawValue);
+    // TODO validate; value needs to always < 0xFF
     if (hexValue != null) return hexValue;
     throw AssemblerError('Invalid hex value: $rawValue');
   }

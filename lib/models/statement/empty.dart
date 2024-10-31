@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dax64/models/statement/statement.dart';
 
 /// Models empty or plain comment line in assembly source code
@@ -10,4 +12,10 @@ class EmptyStatement extends Statement {
 
   @override
   bool isResolved() => true;
+
+  @override
+  Map<String, dynamic> defs() => HashMap();
+
+  @override
+  Map<String, dynamic> refs() => HashMap();
 }

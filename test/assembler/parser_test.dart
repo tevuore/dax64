@@ -37,7 +37,7 @@ void main() {
 
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
-    final instruction = toAssemblyInstruction(line);
+    final instruction = toResolvedAssemblyInstruction(line);
 
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('LDY'));
@@ -51,7 +51,7 @@ void main() {
 
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
-    final instruction = toAssemblyInstruction(line);
+    final instruction = toResolvedAssemblyInstruction(line);
 
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('RTS'));
@@ -65,7 +65,7 @@ void main() {
 
     final program = parser.parse(input);
     final line = takeSingleLineFromSingleBlock(program);
-    final instruction = toAssemblyInstruction(line);
+    final instruction = toResolvedAssemblyInstruction(line);
 
     expect(instruction.label, equals('LABEL1'));
     expect(instruction.instructionSpec.instruction, equals('LDY'));

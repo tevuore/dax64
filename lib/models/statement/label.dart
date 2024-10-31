@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dax64/models/statement/statement.dart';
 
 /// Only label on line
@@ -16,4 +18,14 @@ class LabelStatement extends Statement {
 
   @override
   bool isResolved() => true;
+
+  @override
+  Map<String, dynamic> defs() {
+    final map = HashMap<String, dynamic>();
+    map[label] = this;
+    return map;
+  }
+
+  @override
+  Map<String, dynamic> refs() => HashMap();
 }

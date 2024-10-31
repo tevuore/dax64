@@ -25,4 +25,10 @@ abstract class Statement {
   bool isResolved();
 
   bool get shouldAssemble;
+
+  // dynamic defs: label, variable definition, macro definitions
+  Map<String, dynamic> defs();
+
+  // dynamic refs: label ref or variable ref and macro invocation
+  Map<String, dynamic> refs();
 }
