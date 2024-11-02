@@ -41,5 +41,4 @@ AssemblyData toAssemblyData(AsmProgramLine line) {
       throw Exception(
           "AsmProgramLine doesn't have AssemblyData: ${line.statement.statementStr}");
   }
-  return line.statement as AssemblyData;
 }

@@ -65,7 +65,7 @@ void main() {
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('STA'));
     expect(instruction.operand.value.isEmpty(), false);
-    expect(instruction.operand!.value.getRawValue(), 'DATA');
+    expect(instruction.operand.value.getRawValue(), 'DATA');
   });
 
   test('should parse statement with label ref to later def', () async {
@@ -89,7 +89,7 @@ void main() {
 
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('JMP'));
-    expect(instruction.operand!.value.isEmpty(), false);
-    expect(instruction.operand!.value.getRawValue(), 'JUMP');
+    expect(instruction.operand.value.isEmpty(), false);
+    expect(instruction.operand.value.getRawValue(), 'JUMP');
   });
 }

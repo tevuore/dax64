@@ -128,7 +128,7 @@ AssemblyStatement buildAssemblyStatement(
   // by defining is it referring to zero page or not.
 
   final operand = LateOperand(
-      addressingMode: addressingMode,
+      addressingModeHint: addressingMode,
       refOperandValue: operandValue as RefOperandValue,
       rawValue: input);
 

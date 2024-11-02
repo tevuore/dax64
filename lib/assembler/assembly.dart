@@ -47,12 +47,6 @@ class ResolvedAssemblyInstruction extends AssemblyStatement {
   });
 
   @override
-  List<int> assemble(AssemblyContext context) {
-    // TODO: implement assemble
-    throw UnimplementedError();
-  }
-
-  @override
   bool isResolved() => true;
 
   @override
@@ -339,7 +333,7 @@ class ResolvedAssembly extends Assembly {
         }
         break;
 
-      case AssemblyData data:
+      case AssemblyData _:
         // TeroV impl
         throw NotImplementedAssemblerError(
             "AssemblyData assembling not yet implemented");
@@ -511,11 +505,12 @@ class AssemblyData extends AssemblyStatement {
       super.label,
       required super.statementStr});
 
-  @override
-  List<int> assemble(AssemblyContext context) {
-    // TODO: implement assemble
-    throw UnimplementedError();
-  }
+  // TeroV impl
+  // @override
+  // List<int> assemble(AssemblyContext context) {
+  //   // TODO: implement assemble
+  //   throw UnimplementedError();
+  // }
 
   @override
   Map<String, dynamic> defs() {

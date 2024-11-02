@@ -41,8 +41,8 @@ void main() {
 
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('LDY'));
-    expect(HexFormatter.format(instruction.operand!.value.toBytes()),
-        equals('00'));
+    expect(
+        HexFormatter.format(instruction.operand.value.toBytes()), equals('00'));
     expect(line.comment, equals('Load Y'));
   });
 
@@ -55,8 +55,8 @@ void main() {
 
     expect(instruction.hasLabel(), false);
     expect(instruction.instructionSpec.instruction, equals('RTS'));
-    expect(instruction.operand!.value.isEmpty(), true);
-    expect(instruction.operand!.addressingMode, equals(AddressingMode.implied));
+    expect(instruction.operand.value.isEmpty(), true);
+    expect(instruction.operand.addressingMode, equals(AddressingMode.implied));
     expect(line.comment, equals('Return from subroutine'));
   });
 
@@ -69,8 +69,8 @@ void main() {
 
     expect(instruction.label, equals('LABEL1'));
     expect(instruction.instructionSpec.instruction, equals('LDY'));
-    expect(HexFormatter.format(instruction.operand!.value.toBytes()),
-        equals('00'));
+    expect(
+        HexFormatter.format(instruction.operand.value.toBytes()), equals('00'));
     expect(line.comment, equals('Load Y'));
   });
 

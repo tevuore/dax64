@@ -51,18 +51,18 @@ class Instruction {
   Opcode? getImplicitOpcode() {
     // i.e. no operand
     // if just opcode exists then there should be only one
-    final opcodeObjs =
+    final opcodeObjects =
         this.opcodes.where((element) => element.bytes.length == 1).toList();
-    if (opcodeObjs.isEmpty) {
+    if (opcodeObjects.isEmpty) {
       return null;
     }
 
-    if (opcodeObjs.length > 1) {
+    if (opcodeObjects.length > 1) {
       throw InternalAssemblerError(
-          "Multiple implicit opcodes for instruction: ${instruction}, ${opcodeObjs}");
+          "Multiple implicit opcodes for instruction: ${instruction}, ${opcodeObjects}");
     }
 
-    return opcodeObjs.first;
+    return opcodeObjects.first;
   }
 
   // TeroV how this is retained for generated code?
