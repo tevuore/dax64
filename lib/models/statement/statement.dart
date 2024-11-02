@@ -1,9 +1,10 @@
+import 'package:dax64/assembler/assembly_context.dart';
 import 'package:dax64/assembler/errors.dart';
 
 abstract class Statement {
   // after comment and trimming, real payload of line what is left
   late final String statementStr;
-  late final String? _label;
+  late final LabelName? _label;
 
   // TODO should we have own type for label that prevents empty values => we could have this class abstract
   Statement({required this.statementStr, String? label}) {
@@ -13,7 +14,8 @@ abstract class Statement {
     _label = label;
   }
 
-  String get label {
+  // TODO should this be 'id' instead?
+  LabelName get label {
     if (_label == null) {
       throw AssemblerError('Statement has no label');
     }

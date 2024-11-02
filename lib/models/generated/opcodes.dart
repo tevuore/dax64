@@ -68,7 +68,7 @@ class Instruction {
   // TeroV how this is retained for generated code?
   Opcode? getOpcode(AddressingMode addressingMode) {
     return opcodes.firstWhere((element) =>
-        areSameAddressingModes(element.addressMode, addressingMode))
+        areSameAddressingModes(element.addressMode, addressingMode));
   }
 
   // TeroV how this is retained for generated code?

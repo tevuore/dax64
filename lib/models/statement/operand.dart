@@ -31,7 +31,6 @@ abstract class OperandValue {
   }
 }
 
-
 class EmptyOperandValue extends OperandValue {
   @override
   bool isEmpty() => true;
@@ -106,7 +105,8 @@ class IntegerOperandValue extends OperandValue {
     Uint8List bytes;
     if (value <= 0xFF) {
       bytes = Uint8List.fromList([value]);
-    } if (value <= 0xFFFF) {
+    }
+    if (value <= 0xFFFF) {
       bytes = Uint8List.fromList([value | 0xFF, value | 0xFF00]);
     } else {
       throw AssemblerError("Invalid operand value: $value");
@@ -119,7 +119,8 @@ class IntegerOperandValue extends OperandValue {
     try {
       var intValue = int.parse(value);
       if (intValue < 0 || intValue > 0xFF) {
-        throw AssemblerError('Integer operand value is not in valid range of 0x0 - 0xFFF: $value');
+        throw AssemblerError(
+            'Integer operand value is not in valid range of 0x0 - 0xFFF: $value');
       }
       return IntegerOperandValue.build(intValue);
     } on FormatException catch (_) {
@@ -174,15 +175,15 @@ class RefOperandValue extends OperandValue {
   bool isRefValue() => true;
 
   @override
-  Uint8List toBytes() => throw InternalAssemblerError('RefOperandValue not resolved');
+  Uint8List toBytes() =>
+      throw InternalAssemblerError('RefOperandValue not resolved');
 
   @override
   String getRawValue() => _rawValue;
 
   @override
-  int getIntValue() => throw InternalAssemblerError('RefOperandValue not resolved');
-
-
+  int getIntValue() =>
+      throw InternalAssemblerError('RefOperandValue not resolved');
 
   OperandValue resolve(AssemblyContext context) {
     final label = context.label(_rawValue);
@@ -192,15 +193,17 @@ class RefOperandValue extends OperandValue {
       if (label.memoryAddress != null) {
         return IntegerOperandValue.build(label.memoryAddress!);
       } else {
-        xxx not able to resolve
-
-        xxx return unresolved label => how resolve that later, i.e. delayed label
+        // if label is not yet resolved, then return itself
+        return this;
       }
     }
 
     final variable = context.variable(_rawValue);
     if (variable != null) {
-      return IntegerOperandValue.build(variable.value)
+      return IntegerOperandValue.build(variable.value);
     }
+
+    // TODO any chance to get line number
+    throw AssemblerError("Could not find referenced value: $_rawValue");
   }
 }

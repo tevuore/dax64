@@ -20,6 +20,8 @@ class AssemblyContext {
 
   Label? label(LabelName name) => _labels[name];
 
+  Map<LabelName, Label> labels() => UnmodifiableMapView(_labels);
+
   MacroAssignment? variable(VariableName name) => _variables[name];
 
   MacroDefinition? macro(MacroName name) => _macros[name];

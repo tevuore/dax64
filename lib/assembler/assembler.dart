@@ -1,14 +1,11 @@
 import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/assembler_config.dart';
 import 'package:dax64/assembler/errors.dart';
-import 'package:dax64/assembler/parser/operand_parser.dart';
 import 'package:dax64/assembler/parser/parser.dart';
 import 'package:dax64/models/asm_program.dart';
 import 'package:dax64/models/generated/index.dart';
-import 'package:dax64/utils/hex8bit.dart';
 
 import 'assembly.dart';
 import 'assembly_context.dart';
@@ -38,18 +35,17 @@ class Assembler {
 
   List<int> secondRoundAssemble(AsmProgram program, AssemblerConfig config) {
     int defaultMemoryAddress = config.getDefaultStartingMemoryAddress();
-    
+
     // Make sure blocks are in order, collects blocks and sort into order
     // Note that in the end resulting memoryBlocks (in future there can be
-    // several) need to be continuous. 
-    
-    final blocks = filterAndSortBlocks(
-        program, 
-        defaultMemoryAddress);
+    // several) need to be continuous.
+
+    final blocks = filterAndSortBlocks(program, defaultMemoryAddress);
 
     var context = AssemblyContext.newInstance(
         currentMemoryAddress: blocks[0].memoryAddress!,
-        labels: program.labels.map((labelName, line) => MapEntry(labelName, Label(name: labelName, memoryAddress: null))),
+        labels: program.labels.map((labelName, line) =>
+            MapEntry(labelName, Label(name: labelName, memoryAddress: null))),
         variables: program.variables,
         macros: program.macros);
 
@@ -133,15 +129,21 @@ class Assembler {
         // as delayed labels in assembled are referring to index within returned
         // bytes, we need to map indexes used in 'bytes'
         for (final newDelayedLabel in assembled.delayedLabels.keys) {
-          final newDelayedLabelIndexes = assembled.delayedLabels[newDelayedLabel]!;
+          final newDelayedLabelIndexes =
+              assembled.delayedLabels[newDelayedLabel]!;
           for (final delayedLabelIndex in newDelayedLabelIndexes) {
-            final delayedLabelAddrIndex = context.currentMemoryAddress + delayedLabelIndex;
-            delayedLabels.putIfAbsent(newDelayedLabel, () => []).add(delayedLabelAddrIndex);
+            final delayedLabelAddrIndex =
+                context.currentMemoryAddress + delayedLabelIndex;
+            delayedLabels
+                .putIfAbsent(newDelayedLabel, () => [])
+                .add(delayedLabelAddrIndex);
           }
         }
 
         context = context.updateCopy(
-            currentMemoryAddress_: context.currentMemoryAddress - labelAddressOffset + assembledBytes.length,
+            currentMemoryAddress_: context.currentMemoryAddress -
+                labelAddressOffset +
+                assembledBytes.length,
             resolvedLabels: assembled.resolvedLabels);
 
         // validate incoming byte values
@@ -150,50 +152,23 @@ class Assembler {
             throw InternalAssemblerError("Assembled byte can't be less than 0");
           }
           if (b > 0xFF) {
-            throw InternalAssemblerError("Assembled byte can't be greater than 0xFF");
+            throw InternalAssemblerError(
+                "Assembled byte can't be greater than 0xFF");
           }
         }
         bytes.addAll(assembledBytes);
       }
-
-      // TeroV logic of following needs to be moved to assembly or lower...
-      //   try {
-      //     switch (line.statement) {
-      //       case final AssemblyStatement statement:
-      //         var statementBytes =
-      //             assembleAssemblyStatement(statement, context);
-      //         bytes.addAll(statementBytes);
-      //         break;
-      //
-      //       case final MacroStatement _:
-      //         throw UnimplementedError('Macro statements not yet implemented');
-      //
-      //       // plain labels do not generate any assembly output
-      //       case final LabelStatement _:
-      //       case final EmptyStatement _:
-      //       default:
-      //         // empty statements do not generate any assembly output
-      //         continue;
-      //     }
-      //   } catch (e, stacktrace) {
-      //     // TODO with verbose flag print stacktrace
-      //     print(e);
-      //     print(stacktrace);
-      //
-      //     throw AssemblerError(
-      //         'Error on line ${line.lineNumber}: ${line.originalLine}. $e');
-      //   }
-      // }
     }
 
     return bytes;
   }
 
   ///
-  List<AsmBlock> filterAndSortBlocks(AsmProgram program, int defaultStartingMemoryAddress) {
+  List<AsmBlock> filterAndSortBlocks(
+      AsmProgram program, int defaultStartingMemoryAddress) {
     // it could be that all blocks have memory address defined but if not then
     // we use for one a default address.
-    
+
     final blocks = program.files
         .fold(<AsmBlock>[], (list, file) {
           list.addAll(file.blocks);
@@ -205,89 +180,28 @@ class Assembler {
             return b.makeCopy(defaultStartingMemoryAddress);
           }
           return b;
-        }).toList();
-    
-    blocks
-        .sort((a, b) => a.memoryAddress! - b.memoryAddress!);
-    
+        })
+        .toList();
+
+    blocks.sort((a, b) => a.memoryAddress! - b.memoryAddress!);
+
     blocks.reduce((a, b) {
       if (a.hasUndefinedAddress()) {
         throw AssemblerError("Unexpected undefined address for asm block");
       }
-      
+
       if (a.hasRelativeAddress()) {
         throw AssemblerError("Unexpected relative address for asm block");
       }
-        
+
       if (a.memoryAddress == b.memoryAddress) {
-        throw AssemblerError("Two blocks have same starting memory address: ${a.memoryAddress}");
+        throw AssemblerError(
+            "Two blocks have same starting memory address: ${a.memoryAddress}");
       }
-      
+
       return b;
     });
 
     return blocks;
   }
-
-  ///
-  List<int> assembleAssemblyStatement(
-      Assembly assembly, AssemblyContext context) {
-
-    final AssemblyStatement statement;
-
-    if (!statement.shouldAssemble) return [];
-    final bytes = <int>[];
-
-    switch (statement) {
-      case AssemblyInstruction(
-          :final opcode,
-          :final instructionSpec,
-          :var operand
-        ):
-        bytes.add(parse8BitHex(opcode.opcode));
-
-        // operand may refer to macro or label, so resolve those
-        operand = operand.resolve(context);
-
-        xxx TeroV because opcode may change based on whether resolved operand is zeropage or 2 byte label we can't know it before hand'
-        // TeroV move to common place
-        var expectedAddressingMode = opcode.map((opcode) => addressingModes[opcode.addressMode]).toList();
-
-        // special case for relative addressing mode
-        if (isRelativeJumpInstruction(instructionSpec) &&
-            operand.getAddressingMode() == AddressingMode.absolute) {
-          throw NotImplementedAssemblerError(
-              'Relative addressing mode not implemented for instruction: ${instructionSpec.instruction}');
-        }
-
-        final operandBytes =
-            parseOperandValue(operand);
-
-        bytes.addAll(operandBytes);
-
-        break;
-
-      case AssemblyInstruction(:var opcode):
-        // no operands
-        // TODO "opcode"*2 is not the naming BEST
-        bytes.add(parse8BitHex(opcode.opcode));
-        break;
-
-      case final AssemblyData _:
-        break;
-
-      default:
-        break;
-    }
-
-    return bytes;
-  }
-
-  bool isRelativeJumpInstruction(Instruction instruction) {
-    return instruction.opcodes
-        .every((element) => element.addressMode.endsWith("Rela"));
-  }
 }
-
-
-
