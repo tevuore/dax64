@@ -1,3 +1,4 @@
+import 'package:dax64/assembler/addressing_modes.dart';
 import 'package:dax64/assembler/errors.dart';
 import 'package:meta/meta.dart';
 
